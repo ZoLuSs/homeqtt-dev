@@ -11,6 +11,10 @@ if ! which nginx > /dev/null 2>&1; then
     read -n1 -p "nginx is not present, do you want to install nginx(y/n): " install_nginx 
     if [ "$install_nginx" == "y" ];
     then
+    sudo wget https://nginx.org/keys/nginx_signing.key 
+    sudo apt-key add nginx_signing.key
+    sudo sh -c 'echo "deb https://nginx.org/packages/mainline/$distro/ $(lsb_release -sc) nginx
+deb-src https://nginx.org/packages/mainline/$distro $(lsb_release -sc) nginx" > /etc/apt/sources.list.d/nginx.list' 
     sudo apt install nginx -y
     echo $(nginx -v) TESTER
     fi
@@ -69,7 +73,7 @@ if ! which npm > /dev/null 2>&1; then
     *) echo dont know ;; 
     esac
 else
-    echo -e "npm   \e[32mOK\e[0m"
+    echo -e "npm       \e[32mOK\e[0m"
 fi
 
 if ! which pm2 > /dev/null 2>&1; then
