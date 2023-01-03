@@ -12,7 +12,7 @@ if ! which nginx > /dev/null 2>&1; then
     if [ "$install_nginx" == "y" ];
     then
     sudo apt install nginx -y
-    echo $(nginx -v)
+    echo $(nginx -v) TESTER
     fi
 else
     echo -e "nginx     \e[32mOK\e[0m"
@@ -20,14 +20,15 @@ fi
 
 if ! which php > /dev/null 2>&1; then
     read -n1 -p "php is not present, do you want to install php(y/n): " install_php 
-    if [ "$install_nginx" == "y" ];
+    if [ "$install_php" == "y" ];
     then
     sudo apt install dirmngr ca-certificates software-properties-common gnupg gnupg2 apt-transport-https curl -y
-        if ["$distro" == "Debian"];
+        if [ "$distro" == "Debian" ];
         then
         curl -sSL https://packages.sury.org/php/README.txt | sudo bash -x
+        echo "Add repo to apt"
         fi
-        if ["$distro" == "Ubuntu"];
+        if [ "$distro" == "Ubuntu" ];
         then
         sudo add-apt-repository ppa:ondrej/php
         fi
