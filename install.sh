@@ -107,34 +107,33 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
         rm -rf /etc/nginx/site-enabled
         rm -r /etc/nginx/conf.d/*
         cat << EOF >> /etc/nginx/conf.d/homeqtt.conf
-        server {
-            listen $webport;
-            listen [::]:$webport;
+server {
+    listen $webport;
+    listen [::]:$webport;
 
-            server_name  $hostname;
-            index  index.php;
+    server_name  $hostname;
+    index  index.php;
+    root /opt/homeqtt/web;
+    autoindex off;
 
-            autoindex off;
+    location / {
+        try_files \$uri \$uri/ \$uri.php;
+        index index.php;
+    }
 
-            location / {
-                root /opt/homeqtt/web;
-                try_files \$uri \$uri/ \$uri.php;
-                index index.php;
-            }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    }
 
-            location ~ \.php$ {
-                include snippets/fastcgi-php.conf;
-                fastcgi_pass unix:/run/php/php8.2-fpm.sock;
-            }
-
-            location /socket.io/ {
-                proxy_pass http://localhost:$socketport;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade \$http_upgrade;
-                proxy_set_header Connection "Upgrade";
-                proxy_set_header Host \$host;
-            }
-        }
+    location /socket.io/ {
+        proxy_pass http://localhost:$socketport;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host \$host;
+    }
+}
 EOF
     echo -e "\e[1;34mRestart nginx...\e[0m"
     ${SUDO} systemctl restart nginx
