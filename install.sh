@@ -91,7 +91,7 @@ fi
 
 npm install --omit=dev
 echo ""
-read -n1 -p "Create nginx config (this will delete the default file) ?
+read -n1 -p "Create nginx config (this will delete all the config file) ?
 If you select no, you need to create your own nginx config (y/n): " create_nginx_config 
     if [ "$create_nginx_config" == "y" ];
     then
@@ -102,6 +102,10 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
         read -p "Web port (default: 80): " webport
         read -p "Websocket port (default: 81): " socketport
         read -p "Web hostname (default: localhost): " hostname
+        systemctl stop nginx
+        rm -rf /etc/nginx/site-available
+        rm -rf /etc/nginx/site-enabled
+        rm -r /etc/nginx/conf.d/*
         cat << EOF >> /etc/nginx/conf.d/homeqtt.conf
         server {
             listen $webport;
@@ -119,11 +123,8 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
             }
 
             location ~ \.php$ {
-                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                include snippets/fastcgi-php.conf;
                 fastcgi_pass unix:/run/php/php8.2-fpm.sock;
-                fastcgi_index index.php;
-                fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-                include fastcgi_params;
             }
 
             location /socket.io/ {
