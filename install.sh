@@ -91,53 +91,51 @@ fi
 
 npm install --omit=dev
 echo ""
-read -n1 -p "Create nginx config ?
+read -n1 -p "Create nginx config (this will delete the default file) ?
 If you select no, you need to create your own nginx config (y/n): " create_nginx_config 
     if [ "$create_nginx_config" == "y" ];
     then
         echo -e "\e[1;34mBegin configuration: \e[0m"
         webport="80"
-        websocket="81"
+        socketport="81"
         hostname="localhost"
         read -p "Web port (default: 80): " webport
-        read -p "Websocket port (default: 81): " websocket
+        read -p "Websocket port (default: 81): " socketport
         read -p "Web hostname (default: localhost): " hostname
-    fi
+        cat << EOF >> /etc/nginx/conf.d/homeqtt.conf
+        server {
+            listen $webport;
+            listen [::]:$webport;
 
+            server_name  $localhost;
+            index  index.php;
 
-cat << "EOF" > /etc/nginx/conf.d/homeqtt.conf
-server {
-    listen $webport;
-    listen [::]:$webport;
+            autoindex off;
 
-    server_name  $localhost;
-    index  index.php;
+            location / {
+                root /opt/homeqtt/web;
+                try_files \$uri \$uri/ \$uri.php;
+                index index.php;
+            }
 
-    autoindex off;
+            location ~ \.php$ {
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+                include fastcgi_params;
+            }
 
-    location / {
-        root /opt/homeqtt/web;
-        try_files $uri $uri/ $uri.php;
-        index index.php;
-    }
-
-    location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location /socket.io/ {
-        proxy_pass http://localhost:$websocket;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "Upgrade";
-        proxy_set_header Host $host;
-    }
-}
+            location /socket.io/ {
+                proxy_pass http://localhost:$socketport;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade \$http_upgrade;
+                proxy_set_header Connection "Upgrade";
+                proxy_set_header Host \$host;
+            }
+        }
 EOF
+    fi
 
 #read -p "Do you want to create mosquitto user (y/n):" create_mqtt_user
 #if [ "$create_mqtt_user" == "y" ];
