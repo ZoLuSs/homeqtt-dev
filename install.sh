@@ -45,7 +45,7 @@ fi
 if ! which mosquitto > /dev/null 2>&1; then
     read -n1 -p "mosquitto is not present, do you want to install mosquitto(y/n): " install_mqtt 
     case $install_mqtt in  
-    y|Y) sudo apt install mosquitto ;; 
+    y|Y) sudo apt install mosquitto -y ;; 
     *) echo dont know ;; 
     esac
 else
@@ -55,15 +55,25 @@ fi
 if ! which node > /dev/null 2>&1; then
     read -n1 -p "node.js is not present, do you want to install node.js(y/n): " install_nodejs 
     case $install_nodejs in  
-    y|Y) sudo apt install nodejs ;; 
+    y|Y) sudo apt install nodejs npm -y ;; 
     *) echo dont know ;; 
     esac
 else
     echo -e "node.js   \e[32mOK\e[0m"
 fi
 
+if ! which npm > /dev/null 2>&1; then
+    read -n1 -p "npm is not present, do you want to install npm(y/n): " install_npm 
+    case $install_npm in  
+    y|Y) sudo apt install npm -y ;; 
+    *) echo dont know ;; 
+    esac
+else
+    echo -e "npm   \e[32mOK\e[0m"
+fi
+
 if ! which pm2 > /dev/null 2>&1; then
-    read -n1 -p "node.js is not present, do you want to install node.js(y/n): " install_pm2 
+    read -n1 -p "pm2 is not present, do you want to install pm2(y/n): " install_pm2 
     case $install_pm2 in  
     y|Y) npm install pm2 -g ;; 
     *) echo dont know ;; 
