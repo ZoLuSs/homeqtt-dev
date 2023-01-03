@@ -1,0 +1,118 @@
+body{
+    background-color: wheat;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.segment{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.cards-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card{
+    background-color: rgba(50, 50, 50, 0.5);
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.card-title{
+    font-size: 20px;
+    font-weight: normal;
+    text-align: center;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.card-title span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 50px;
+    padding-top: 5px;
+}
+
+.card-container{
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.card.light svg{
+    fill:#fecb3e;
+}
+
+.card.light.active{
+    background-color: #fecb3e;
+    color: white;
+ }
+
+ .card.light.active svg{
+    fill: white;
+ }
+
+.card svg{
+    fill: white;
+    fill-rule: evenodd
+}
+
+.card-container.action{
+    align-items: center;
+    justify-content: center;
+}
+
+.card-container.action svg{
+    height: 80px;
+    width: 120px;
+}
+
+.card-icon-container{
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.card-icon-container svg{
+    height: 40px;
+}
+
+.card-icon-container.dual-icon svg{
+    width: 35px;
+}
+
+.card-value-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 30px;
+    font-weight: normal;
+    text-align: center;
+    flex-grow: 1;
+}

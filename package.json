@@ -1,0 +1,15 @@
+{
+  "name": "homeqtt",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Enzo LUSSO (@ZoLuSs)",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "mqtt": "^4.3.7",
+    "sqlite3": "^5.1.4"
+  }
+}
