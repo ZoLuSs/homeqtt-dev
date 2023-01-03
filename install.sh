@@ -15,8 +15,7 @@ if ! which nginx > /dev/null 2>&1; then
     read -n1 -p "nginx is not present, do you want to install nginx(y/n): " install_nginx 
     if [ "$install_nginx" == "y" ];
     then
-    ${SUDO} wget https://nginx.org/keys/nginx_signing.key 
-    ${SUDO} apt-key add nginx_signing.key
+    ${SUDO} wget -qO- https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
     ${SUDO} sh -c 'echo "deb https://nginx.org/packages/mainline/$distro/ $(lsb_release -sc) nginx
 deb-src https://nginx.org/packages/mainline/$distro $(lsb_release -sc) nginx" > /etc/apt/sources.list.d/nginx.list' 
     ${SUDO} apt install nginx -y
@@ -92,11 +91,53 @@ fi
 
 npm install --omit=dev
 echo ""
-echo -e "\e[1;34mBegin configuration: \e[0m"
+read -n1 -p "Create nginx config ?
+If you select no, you need to create your own nginx config (y/n): " create_nginx_config 
+    if [ "$create_nginx_config" == "y" ];
+    then
+        echo -e "\e[1;34mBegin configuration: \e[0m"
+        webport="80"
+        websocket="81"
+        hostname="localhost"
+        read -p "Web port (default: 80): " webport
+        read -p "Websocket port (default: 81): " websocket
+        read -p "Web hostname (default: localhost): " hostname
+    fi
 
-read -p "Web port (80 recommanded): " webport
-read -p "hostname (Ex: localhost): " hostname
 
+cat << "EOF" > /etc/nginx/conf.d/homeqtt.conf
+server {
+    listen $webport;
+    listen [::]:$webport;
+
+    server_name  $localhost;
+    index  index.php;
+
+    autoindex off;
+
+    location / {
+        root /opt/homeqtt/web;
+        try_files $uri $uri/ $uri.php;
+        index index.php;
+    }
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location /socket.io/ {
+        proxy_pass http://localhost:$websocket;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+}
+EOF
 
 #read -p "Do you want to create mosquitto user (y/n):" create_mqtt_user
 #if [ "$create_mqtt_user" == "y" ];
