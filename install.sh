@@ -96,12 +96,12 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
     if [ "$create_nginx_config" == "y" ];
     then
         echo -e "\e[1;34mBegin configuration: \e[0m"
-        webport="80"
-        socketport="81"
-        hostname="localhost"
         read -p "Web port (default: 80): " webport
+        if [ "$webport" == "" ];then webport="80" fi
         read -p "Websocket port (default: 81): " socketport
+        if [ "$socketport" == "" ];then socketport="81" fi
         read -p "Web hostname (default: localhost): " hostname
+        if [ "$socketport" == "" ];then hostname="localhost" fi
         systemctl stop nginx
         rm -rf /etc/nginx/site-available
         rm -rf /etc/nginx/site-enabled
