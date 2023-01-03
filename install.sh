@@ -107,7 +107,7 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
             listen $webport;
             listen [::]:$webport;
 
-            server_name  $localhost;
+            server_name  $hostname;
             index  index.php;
 
             autoindex off;
@@ -135,6 +135,8 @@ If you select no, you need to create your own nginx config (y/n): " create_nginx
             }
         }
 EOF
+    echo -e "\e[1;34mRestart nginx...\e[0m"
+    ${SUDO} systemctl restart nginx
     fi
 
 #read -p "Do you want to create mosquitto user (y/n):" create_mqtt_user
