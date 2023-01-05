@@ -20,9 +20,10 @@
                 if($mqtt){
                     $userQ = $db->query("SELECT id FROM user");
                     $user = $userQ->fetchArray();
-                    if($user){
-                        echo "Everything is OK, ready to launch";
-                    }else{
+                    if($user){$form=false;$form_url="/config/check";?>
+                        <h2 id="title">Install done !</h2>
+                    <a class="button wide" id="submit">Check everythings and launch</a>
+                    <?php }else{
                         $form=true;$form_url="/config/create-user";$goto="/firstlaunch";?>
                         <h2>Create first user: </h2>
                         <form id="form">
