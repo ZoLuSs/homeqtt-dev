@@ -1,0 +1,294 @@
+html{
+    height: 100%;
+}
+
+body{
+    background-image: linear-gradient(37deg, rgba(242, 105, 166, 0.86), rgba(149, 86, 230, 0.89) 36.97%, rgba(47, 149, 231, 0.84));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.logo{
+    margin: 5px;
+}
+
+.logo.high{
+    width: 150px;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-width: 350px;
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.container h2{
+    margin-top: 10px;
+}
+
+.segment{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.button.full-width{
+    width: 100%;
+}
+
+.button.wide{
+    width: 350px;
+}
+
+.button{
+    background-color: rgba(50, 50, 50, 0.5);
+    text-decoration: none;
+    color: white;
+    border-radius: 10px;
+    margin: 15px 0px;
+    height: 35px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button:hover{
+    transition: 0.4s;
+    background-color: rgba(40, 40, 40, 0.7);
+}
+
+.text-center{
+    text-align: center;
+}
+
+.cards-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.card{
+    background-color: rgba(50, 50, 50, 0.5);
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.card-title{
+    font-size: 20px;
+    font-weight: normal;
+    text-align: center;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.card-title span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 50px;
+    padding-top: 5px;
+}
+
+.card-container{
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.card.light svg{
+    fill:#fecb3e;
+}
+
+.card.light.active{
+    background-color: #fecb3e;
+    color: white;
+ }
+
+ .card.light.active svg{
+    fill: white;
+ }
+
+.card svg{
+    fill: white;
+    fill-rule: evenodd
+}
+
+.card-container.action{
+    align-items: center;
+    justify-content: center;
+}
+
+.card-container.action svg{
+    height: 80px;
+    width: 120px;
+}
+
+.card-icon-container{
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.card-icon-container svg{
+    height: 40px;
+}
+
+.card-icon-container.dual-icon svg{
+    width: 35px;
+}
+
+.card-value-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 30px;
+    font-weight: normal;
+    text-align: center;
+    flex-grow: 1;
+}
+
+/* Form */
+
+form{
+    width: 350px;
+}
+
+form .input-container{
+    height: 60px;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.input-container-2{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.input-container-2, .input-container-2 > select {
+    width: 100%;
+}
+
+
+input[type="checkbox"]{
+    width: 30px;
+    height: 30px;
+}
+
+form > .input-container.row{
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+form .input-container > label{
+    margin-right: 20px;
+    font-size: large;
+}
+
+form .input-container input{
+    height: 30px;
+    border-radius: 5px;
+    border: 0px;
+    font-size: medium;
+    background-color: rgba(60,60,60,0.4);
+    color: white;
+}
+
+form .input-container select{
+    height: 32px;
+    border-radius: 5px;
+    border: 0px;
+    font-size: medium;
+    background-color: rgba(60,60,60,0.4);
+    color: white;
+}
+
+form > .input-container > input{
+    padding-left: 10px;
+}
+
+form > .input-container > input:focus{
+    background-color: rgba(60,60,60,0.6);
+}
+
+form > label{
+    width: 150px;
+}
+
+input[type="file"] {
+  color: #b8b8b8;
+  border-radius: 10px;
+  background-color: rgba(70, 70, 70, 0.3);
+}
+
+/* Loader */
+.modal{
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(40, 40, 40, 0.7);
+}
+
+.modal-container{
+    margin: auto;
+    padding: 20px;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 3px solid #FFF;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+  
+@keyframes rotation {
+0% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(360deg);
+}
+} 
