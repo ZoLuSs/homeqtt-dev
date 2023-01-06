@@ -9,7 +9,7 @@ if (!file_exists('../../homeqtt.db')) {
     $tables = 'CREATE TABLE "user" (
         "id"    INTEGER,
         "username"  TEXT,
-        "password"  TEXT,
+        "password"  BLOB,
 		PRIMARY KEY("id" AUTOINCREMENT)
     );
     CREATE TABLE "config" (

@@ -21,9 +21,9 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
 
 if (file_exists('../../homeqtt.db')) {
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $db = new SQLite3('../../homeqtt.db');    
-    $insert = $db->prepare("INSERT INTO user ('username', 'password') VALUES (':username',':password')");
-    $insert->bindValue(':username', $username, SQLITE3_BLOB);
+    $db = new SQLite3('../../homeqtt.db');
+    $insert = $db->prepare("INSERT INTO user ('username', 'password') VALUES (:username,:password)");
+    $insert->bindValue(':username', $username, SQLITE3_TEXT);
     $insert->bindValue(':password', $passwordHash, SQLITE3_BLOB);
     $result = $insert-> execute();
 }else{

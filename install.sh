@@ -89,12 +89,12 @@ else
     echo -e "pm2       \e[32mOK\e[0m"
 fi
 # Config
-npm install --omit=dev
+npm install --omit=dev --silent
 echo ""
 
 echo -e "\e[1;34mConfig: \e[0m"
 echo ""
-if ${SUDO} useradd homeqtt -r -M; then
+if ${SUDO} useradd homeqtt -r; then
     echo -e "Create user homeqtt: \e[32mOK\e[0m"
 else
     echo -e "Create user homeqtt: \e[31mError\e[0m"
@@ -299,3 +299,34 @@ fi
 #echo "MQTT password: $pass_output"
 #mosquitto_passwd -b /etc/mosquitto/passwd homeqtt 
 #fi
+echo ""
+echo -e "\e[1;34mCreating systemd service\e[0m"
+echo -e "\e[31mDo not launch homeqtt via systemd !\e[0m"
+
+${SUDO} cat << EOF > /lib/systemd/system/homeqtt.service
+[Unit]
+Description=HomeQTT - Control your home with MQTT protocol
+Documentation=https://github.com/ZoLuSs/homeqtt/docs
+After=network.targer
+
+[Service]
+Type=simple
+User=homeqtt
+ExecStart=/usr/bin/node /opt/homeqtt/app.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.targer
+EOF
+
+${SUDO} systemctl daemon-reload
+
+
+echo ""
+homeqttSudoers="homeqtt ALL=NOPASSWD: /bin/systemctl"
+if ! grep -q "$homeqttSudoers" "/etc/sudoers"; then
+echo $homeqttSudoers >> "/etc/sudoers"
+echo -e "\e[1;34mAllow homeqtt to manage systemctl\e[0m"
+else
+echo -e "\e[1;34mhomeqtt already allowed to manage systemctl\e[0m"
+fi

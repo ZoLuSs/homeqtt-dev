@@ -63,13 +63,13 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
 
 if (file_exists('../../homeqtt.db')) {
     $db = new SQLite3('../../homeqtt.db');
-    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',':protocol'),('mqtt_tls',':tls'),('mqtt_host',':host'),('mqtt_port',':port'), ('mqtt_username',':username'), ('mqtt_password',':password')");
-    $insert->bindValue(':protocol', $protocol, SQLITE3_BLOB);
-    $insert->bindValue(':tls', $tls, SQLITE3_BLOB);
-    $insert->bindValue(':host', $host, SQLITE3_BLOB);
-    $insert->bindValue(':port', $port, SQLITE3_BLOB);
-    $insert->bindValue(':username', $username, SQLITE3_BLOB);
-    $insert->bindValue(':password', $password, SQLITE3_BLOB);
+    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_host',:host),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
+    $insert->bindValue('protocol', $protocol, SQLITE3_TEXT);
+    $insert->bindValue('tls', $tls, SQLITE3_BLOB);
+    $insert->bindValue('host', $host, SQLITE3_BLOB);
+    $insert->bindValue('port', $port, SQLITE3_BLOB);
+    $insert->bindValue('username', $username, SQLITE3_BLOB);
+    $insert->bindValue('password', $password, SQLITE3_BLOB);
     $result = $insert-> execute();
 }else{
     http_response_code(400);
