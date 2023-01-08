@@ -2,7 +2,7 @@
 if [ "$(whoami)" != "root" ]; then
     SUDO=sudo
 fi
-
+#if grep -q -F 'io.listen(' /opt/homeqtt-dev/app.js ; then sed -i 'io.listen($socketport);' /opt/homeqtt-dev/app.js; else echo "io.listen($socketport);" >> /opt/homeqtt-dev/app.js; fi
 echo -e "\e[1;34mCheck what OS you are running...\e[0m"
 distro=$(lsb_release -i -s)
 version=$(lsb_release -r -s)
@@ -238,7 +238,7 @@ EOF
 fi
 
 read -n1 -p "Create nginx config (this will delete all the config file) ?
-If you select no, you need to create your own nginx config (y/n): " create_nginx_config 
+If you select no, you need to create your own nginx config and edit app.js (y/n): " create_nginx_config 
 echo ""
 if [ "$create_nginx_config" == "y" ];
 then
@@ -249,6 +249,7 @@ then
     if [ "$socketport" == "" ];then socketport="81"; fi
     read -p "Web hostname (default: localhost): " hostname
     if [ "$socketport" == "" ];then hostname="localhost"; fi
+    sed -i "s/io.listen(.*/io.listen($socketport);/g" /opt/homeqtt/app.js
     ${SUDO} systemctl stop nginx
     ${SUDO} rm -rf /etc/nginx/site-available
     ${SUDO} rm -rf /etc/nginx/site-enabled
@@ -320,7 +321,6 @@ WantedBy=multi-user.targer
 EOF
 
 ${SUDO} systemctl daemon-reload
-
 
 echo ""
 homeqttSudoers="homeqtt ALL=NOPASSWD: /bin/systemctl"

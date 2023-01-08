@@ -57,15 +57,15 @@ if (file_exists('../../homeqtt.db')) {
     http_response_code(400);
     array_push($return_msg,"Database: Error no database found");
 }
+exec("sudo systemctl start homeqtt");
+exec("sudo systemctl enable homeqtt");
+$status = exec("sudo systemctl is-active homeqtt");
+if($status == "active"){
+    array_push($return_msg, "HomeQTT is running !");
+}
+else{
+    http_response_code(400);
+    array_push($return_msg,"HomeQTT can't be started. Status returned: ".$status);
+}
 
-$test = json_encode($return_msg);
-echo $test;
-
-$test2 = exec("pm2 pid homeqtt");
-echo $test2;
-
-$starthomeqtt = exec("pm2 start app.js --name homeqtt");
-echo $starthomeqtt;
-
-$test2 = exec("pm2 pid homeqtt");
-echo $test2;
+echo json_encode($return_msg);

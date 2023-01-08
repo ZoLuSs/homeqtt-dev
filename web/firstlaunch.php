@@ -11,7 +11,7 @@
         <img src="img/logo-icon.png" alt="logo" class="logo high">
         <h1>HomeQTT - First launch</h1>
     </div>
-    <div class="container" id="main-container" style="">
+    <div class="container">
         <?php
             if (file_exists('../homeqtt.db')) {
                 $db = new SQLite3('../homeqtt.db');
@@ -20,10 +20,17 @@
                 if($mqtt){
                     $userQ = $db->query("SELECT id FROM user");
                     $user = $userQ->fetchArray();
-                    if($user){$form=false;$form_url="/config/check";?>
-                        <h2 id="title">Install done !</h2>
+                    $status = exec("sudo systemctl is-active homeqtt");
+                    if($user && $status != "active"){$form=false;$form_url="/config/check";?>
+                        <h2>Setup is done !</h2>
                     <a class="button wide" id="submit">Check everythings and launch</a>
-                    <?php }else{
+                    <?php }
+                    else if($user && $status == "active"){?>
+                        <h2>HomeQTT is setup and running !</h2>
+                        <h2>Nothing to do here.</h2>
+                        <a class="button wide" href="/">Go home</a>
+                    <?php }
+                    else{
                         $form=true;$form_url="/config/create-user";$goto="/firstlaunch";?>
                         <h2>Create first user: </h2>
                         <form id="form">
@@ -83,7 +90,7 @@
                     if($_GET["form"] == "restore-backup"){?>
                         <h2>Upload homeqtt.db file:</h2>
                         <form action="config/upload_db.php" method="post" id="form">
-                            <input type="file" name="db" id="db"><br>
+                            <input type="file" name="db"><br>
                             <a class="button wide" onclick="document.getElementById('form').submit();">Upload</a>
                         </form>
                         <a class="button wide" href="/firstlaunch">Back</a>
@@ -98,7 +105,7 @@
                     }
                 }
                 else{ ?>
-                    <h2 id="title">No database detected: </h2>
+                    <h2>No database detected: </h2>
                     <a class="button wide" href="?form=restore-backup">Restore backup</a>
                     <a class="button wide" href="?form=create-db">Create the database</a>
                 <?php
