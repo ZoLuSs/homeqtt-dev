@@ -72,7 +72,14 @@ if(isset($_POST["username"])){
 <?php if(isset($form_url) && !empty($form_url)){ ?>
 <script>
 document.getElementById("submit").addEventListener("click", sendForm);
+document.getElementById("form").addEventListener("keypress", function(event){
+    if (event.key == "Enter"){
+        sendForm();
+    }
+});
+
 loading = document.getElementById("modal");
+
 function sendForm() {
     loading.style.display = "flex";
     <?php if(isset($form) && $form){ ?>

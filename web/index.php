@@ -12,6 +12,7 @@ require_once('config/session.php');
     <script src="/js/socketio/socket.io.min.js"></script>
 </head>
 <body>
+<?php require_once("header.php");?>
 <div class="segment">
     <div class="cards-container">
         <div class="card light">
@@ -172,8 +173,9 @@ const token = "<?php
 require_once("config/jwt.php");
 $jwt = generate_jwt("payload");
 echo $jwt;?>";
-const socket = io.connect('http://homebridge.lusso.lan:4001', {
+const socket = io.connect('http://<?php echo $_SERVER['REQUEST_URI']; ?>:4001', {
   query: {token}
 });
 </script>
+<script src="/js/index.js"></script>
 </html>
