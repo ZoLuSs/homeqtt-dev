@@ -116,9 +116,10 @@ a{
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80%;
+    width: 90%;
     margin-top: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .card{
@@ -126,8 +127,7 @@ a{
     width: 150px;
     height: 150px;
     border-radius: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 10px;
 }
 
 .card-title{

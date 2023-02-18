@@ -173,7 +173,7 @@ const token = "<?php
 require_once("config/jwt.php");
 $jwt = generate_jwt("payload");
 echo $jwt;?>";
-const socket = io.connect('http://<?php echo $_SERVER['REQUEST_URI']; ?>:4001', {
+const socket = io.connect('http://<?php echo $_SERVER['SERVER_NAME']; ?>:4001', {
   query: {token}
 });
 </script>
