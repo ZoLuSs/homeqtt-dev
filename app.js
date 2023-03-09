@@ -7,8 +7,8 @@ const { Server } = require("socket.io");
 const jwt = require('jsonwebtoken');
 
 const io = new Server({ /* options */ });
-
-new sqlite3.Database('homeqtt.db', sqlite3.OPEN_READONLY, (err) => {
+var JWT_KEY;
+var db = new sqlite3.Database('homeqtt.db', sqlite3.OPEN_READWRITE, (err) => {
     if (err && err.code == "SQLITE_CANTOPEN") {
       console.log(err);
         console.log("no database detected !");
@@ -18,12 +18,19 @@ new sqlite3.Database('homeqtt.db', sqlite3.OPEN_READONLY, (err) => {
             process.exit(1);
     } else{
       console.log("Database connected !");
+      db.get('SELECT value FROM config WHERE name = "JWT_KEY"', (err, row) => {
+        if ( err ) {
+          console.log(err.message);
+        }          
+        JWT_KEY = row.value.toString();
+      });
+
     }
 });
 
 io.use(function(socket, next){
   if (socket.handshake.query && socket.handshake.query.token){
-    jwt.verify(socket.handshake.query.token, 'SECRET_KEY', function(err, decoded) {
+    jwt.verify(socket.handshake.query.token, JWT_KEY, function(err, decoded) {
       if (err) return next(new Error('Authentication error'));
       socket.decoded = decoded;
       next();

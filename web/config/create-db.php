@@ -58,6 +58,10 @@ if (!file_exists('../../homeqtt.db')) {
         PRIMARY KEY("id" AUTOINCREMENT)
     );';
     $db->exec($tables);
+    $JWT_KEY = bin2hex(random_bytes(64));
+    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('JWT_KEY',:JWT_KEY)");
+    $insert->bindValue('JWT_KEY', $JWT_KEY, SQLITE3_BLOB);
+    $result = $insert-> execute();
 }
 else{
     http_response_code(500);

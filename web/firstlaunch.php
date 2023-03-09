@@ -60,8 +60,13 @@
                             </select>
                         </div>
                         <div class="input-container-2 center">
-                            <label for="">TLS </label>
+                            <label for="">Use TLS</label>
                             <input type="checkbox" name="tls">
+                        </div>
+
+                        <div class="input-container-2 center">
+                            <label for="">Verify Cert</label>
+                            <input type="checkbox" name="check_cert">
                         </div>
                     </div>
                     <div class="input-container">

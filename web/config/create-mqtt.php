@@ -16,15 +16,15 @@ if(isset($_POST['protocol']) && !empty($_POST['protocol'])){
 }
 
 if(isset($_POST['tls'])){
-    if($_POST['tls'] == "on" || $_POST['tls'] == "off"){
-        $tls = $_POST['tls'];
-    }else{
-        http_response_code(400);
-        exit(json_encode("This tls value is not allowed"));
-    }
+    $tls = "true";
 }else{
-    http_response_code(400);
-    exit(json_encode("TLS is not set"));
+    $tls = "false";
+}
+
+if(isset($_POST['check_cert'])){
+    $check_cert = "true";
+}else{
+    $check_cert = "false";
 }
 
 if(isset($_POST['host']) && !empty($_POST['host'])){
@@ -63,9 +63,10 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
 
 if (file_exists('../../homeqtt.db')) {
     $db = new SQLite3('../../homeqtt.db');
-    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_host',:host),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
+    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_check_cert',:check_cert),('mqtt_host',:host),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
     $insert->bindValue('protocol', $protocol, SQLITE3_TEXT);
     $insert->bindValue('tls', $tls, SQLITE3_BLOB);
+    $insert->bindValue('check_cert', $check_cert, SQLITE3_BLOB);
     $insert->bindValue('host', $host, SQLITE3_BLOB);
     $insert->bindValue('port', $port, SQLITE3_BLOB);
     $insert->bindValue('username', $username, SQLITE3_BLOB);
