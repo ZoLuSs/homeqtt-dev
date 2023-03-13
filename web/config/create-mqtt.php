@@ -3,6 +3,15 @@ header('Content-Type: application/json');
 if(isset($_GET["goto"]) && !empty($_GET["goto"])){
     header("Location: ".$_GET["goto"]);
 }
+
+$db = new SQLite3(__DIR__ . '/../../homeqtt.db');
+
+$mqtt_set = $db->querySingle('SELECT value FROM config WHERE name="mqtt_protocol"');
+if(!is_null($mqtt_set)){
+    http_response_code(400);
+    exit(json_encode("MQTT already configured"));
+}
+
 if(isset($_POST['protocol']) && !empty($_POST['protocol'])){
     if($_POST['protocol'] == "mqtt" || $_POST['protocol'] == "ws"){
         $protocol = $_POST['protocol'];
@@ -27,11 +36,11 @@ if(isset($_POST['check_cert'])){
     $check_cert = "false";
 }
 
-if(isset($_POST['host']) && !empty($_POST['host'])){
-    $host = $_POST['host'];
+if(isset($_POST['broker']) && !empty($_POST['broker'])){
+    $broker = $_POST['broker'];
 }else{
     http_response_code(400);
-    exit(json_encode("The host is missing"));
+    exit(json_encode("The broker is missing"));
 }
 
 if(isset($_POST['port']) && !empty($_POST['port'])){
@@ -61,18 +70,14 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
     exit(json_encode("The password is missing"));
 }
 
-if (file_exists('../../homeqtt.db')) {
-    $db = new SQLite3('../../homeqtt.db');
-    $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_check_cert',:check_cert),('mqtt_host',:host),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
-    $insert->bindValue('protocol', $protocol, SQLITE3_TEXT);
-    $insert->bindValue('tls', $tls, SQLITE3_BLOB);
-    $insert->bindValue('check_cert', $check_cert, SQLITE3_BLOB);
-    $insert->bindValue('host', $host, SQLITE3_BLOB);
-    $insert->bindValue('port', $port, SQLITE3_BLOB);
-    $insert->bindValue('username', $username, SQLITE3_BLOB);
-    $insert->bindValue('password', $password, SQLITE3_BLOB);
-    $result = $insert-> execute();
-}else{
-    http_response_code(400);
-    exit(json_encode("Database doesn't exist"));
-}
+require_once('co_bdd.php');
+
+$insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_check_cert',:check_cert),('mqtt_broker',:broker),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
+$insert->bindValue('protocol', $protocol, SQLITE3_TEXT);
+$insert->bindValue('tls', $tls, SQLITE3_BLOB);
+$insert->bindValue('check_cert', $check_cert, SQLITE3_BLOB);
+$insert->bindValue('broker', $broker, SQLITE3_BLOB);
+$insert->bindValue('port', $port, SQLITE3_BLOB);
+$insert->bindValue('username', $username, SQLITE3_BLOB);
+$insert->bindValue('password', $password, SQLITE3_BLOB);
+$result = $insert-> execute();

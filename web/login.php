@@ -35,6 +35,8 @@ if(isset($_POST["username"])){
         }
     }
 }
+
+require_once("./lang/lang.php");
 ?>
 <!DOCTYPE html>
 <head>
@@ -42,26 +44,26 @@ if(isset($_POST["username"])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index.css">
-    <title>HomeQTT - Login</title>
+    <title>HomeQTT - <?php echo ucfirst(general['login']);?></title>
 </head>
 <body>
     <div class="container" style="margin-top: 4em;"> 
         <img src="img/logo-icon.png" alt="logo" class="logo high">
-        <h1>HomeQTT - Login</h1>
+        <h1>HomeQTT - <?php echo ucfirst(general['login']);?></h1>
     </div>
     <div class="container">
     <?php $form=true;$form_url="login";$goto="/";?>
                         <form id="form">
                               <div class="input-container">
-                                <label for="">Username </label>
+                                <label for=""><?php echo ucfirst(general['username']);?> </label>
                                 <input type="text" name="username">
                             </div>
                             <div class="input-container">
-                                <label for="">Password </label>
+                                <label for=""><?php echo ucfirst(general['password']);?> </label>
                                 <input type="password" name="password">
                             </div>
                         </form>
-                        <a class="button wide" id="submit">Log in</a>
+                        <a class="button wide" id="submit"><?php echo ucfirst(general['login']);?></a>
     </div>
     <div class="modal" id="modal">
         <div class="modal-container">
