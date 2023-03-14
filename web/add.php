@@ -16,7 +16,7 @@ require_once("./lang/lang.php");
         <?php
             if (isset($_GET['type'])) {
                 if($_GET['type'] == "room"){
-                    $form=true;$form_url="/config/create-mqtt";$goto="/firstlaunch";?>
+                    $form=true;$form_url="/config/add-room";$goto="/";?>
                     <h2><?php echo ucfirst(add["addroom"]);?>: </h2>
                     <form id="form">
                         <div class="input-container">

@@ -6,10 +6,9 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
 
 $return_msg = array();
 
-require_once('co_bdd.php');
+require_once(__DIR__ . '/co_bdd.php');
 /* Check if all table are created */
-$db_array = array("config", "user","icons","room","light","powermeter");
-$db = new SQLite3('../../homeqtt.db');
+$db_array = array("config", "user","room","light","powermeter");
 $tableQ = $db->query("SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT LIKE 'sqlite_%'");
 
 $results_array = array();
@@ -21,7 +20,7 @@ if(empty($compare)){
     array_push($return_msg,"Database: OK");
 
     /* Check if all MQTT config are created (no check if there are empty !) */
-    $mqtt_array = array("mqtt_protocol","mqtt_tls","mqtt_host","mqtt_port","mqtt_username","mqtt_password");
+    $mqtt_array = array("mqtt_protocol","mqtt_tls","mqtt_check_cert","mqtt_broker","mqtt_port","mqtt_username","mqtt_password");
     $mqttQ = $db->query("SELECT name, value FROM config WHERE name LIKE 'mqtt%'");
     $mqtt_results_array = array();
     while ($row = $mqttQ->fetchArray()) {

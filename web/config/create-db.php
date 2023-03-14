@@ -21,13 +21,8 @@ if (!file_exists('../../homeqtt.db')) {
     CREATE TABLE "room" (
         "id"	        INTEGER,
         "name"	        TEXT,
+        "order"         INTEGER,
         "background"	TEXT,
-        PRIMARY KEY("id" AUTOINCREMENT)
-    );
-    CREATE TABLE "icons" (
-        "id"	INTEGER,
-        "name"	INTEGER,
-        "svg"	BLOB,
         PRIMARY KEY("id" AUTOINCREMENT)
     );
     CREATE TABLE "light" (

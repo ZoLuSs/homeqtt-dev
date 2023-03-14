@@ -4,7 +4,7 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
     header("Location: ".$_GET["goto"]);
 }
 
-$db = new SQLite3(__DIR__ . '/../../homeqtt.db');
+require_once('co_bdd.php');
 
 $mqtt_set = $db->querySingle('SELECT value FROM config WHERE name="mqtt_protocol"');
 if(!is_null($mqtt_set)){
@@ -69,8 +69,6 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
     http_response_code(400);
     exit(json_encode("The password is missing"));
 }
-
-require_once('co_bdd.php');
 
 $insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_check_cert',:check_cert),('mqtt_broker',:broker),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
 $insert->bindValue('protocol', $protocol, SQLITE3_TEXT);

@@ -15,6 +15,11 @@ body{
     height: 100%;
 }
 
+*{
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 .logo{
     margin: 5px;
 }
@@ -56,12 +61,34 @@ body{
 
 .header .title{
     font-size: 25px;
-    margin-left: 5px;
 }
 
 .header .button{
     height: 40px;
     width: 40px;
+    margin: 0;
+}
+
+.header .dropdown-container{
+    display: none;
+    position: absolute;
+    background-color: rgba(60,60,60,0.4);
+    width: 200px;
+    z-index: 1;
+    flex-direction: column;
+    right: 0;
+    margin-top: 5px;
+}
+
+.header .dropdown.show .dropdown-container{
+    display: flex;
+}
+
+.header .dropdown-container > a{
+    height: 35px;
+    width: 190px;
+    border-radius: 10px;
+    margin: 5px 5px;
 }
 
 a{
@@ -231,6 +258,56 @@ a{
     flex-grow: 1;
 }
 
+/* Table*/
+
+.table-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    max-width: 800px;
+    background-color: rgba(40, 40, 40, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table td,
+  .table th {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: center;
+    background-color: rgba(40, 40, 40, 0.3);
+  }
+
+  .table th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #dddddd;
+  }
+  
+  .table td:first-child {
+    font-weight: 600;
+    color: white;
+    width: 70%;
+    font-size: 30px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  
+  .table td:last-child {
+    text-align: center;
+    width: 30%;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
 /* Form */
 
 form{
@@ -351,7 +428,6 @@ input[type="file"] {
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
 }
-  
 @keyframes rotation {
 0% {
     transform: rotate(0deg);
@@ -360,3 +436,17 @@ input[type="file"] {
     transform: rotate(360deg);
 }
 } 
+
+@media (max-width: 550px) {
+    .header > .left-container > a span {
+      display: none;
+    }
+
+    .header > .left-container {
+        width: 80px;
+    }
+
+    .header > .title-container .title#clock, .header > .title-container .title .dash {
+        display: none;
+    }
+  }

@@ -4,7 +4,7 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
     header("Location: ".$_GET["goto"]);
 }
 
-$db = new SQLite3(__DIR__ . '/../../homeqtt.db');
+require_once('co_bdd.php');
 
 $user_exist = $db->querySingle('SELECT username FROM user');
 if(!is_null($user_exist)){
@@ -29,9 +29,7 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
     exit(json_encode("The password is missing"));
 }
 
-require_once('co_bdd.php');
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-$db = new SQLite3('../../homeqtt.db');
 $insert = $db->prepare("INSERT INTO user ('username', 'password') VALUES (:username,:password)");
 $insert->bindValue(':username', $username, SQLITE3_TEXT);
 $insert->bindValue(':password', $passwordHash, SQLITE3_BLOB);

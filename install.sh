@@ -42,7 +42,7 @@ if ! which php > /dev/null 2>&1; then
     ${SUDO} apt update
     ${SUDO} apt list --upgradable
     ${SUDO} apt upgrade -y
-    ${SUDO} apt install php8.2 php8.2-cli php8.2-fpm php8.2-sqlite3 php8.2-intl -y
+    ${SUDO} apt install php8.2 php8.2-cli php8.2-fpm php8.2-sqlite3 php8.2-intl php8.2-ds -y
     echo $(php -v)
     fi
 else

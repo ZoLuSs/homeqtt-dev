@@ -32,3 +32,28 @@ function formatedCurrentTime(format){
 
     return data;
 }
+
+function classOnClickMGMT(element, className) {
+    // Ajoute un écouteur d'événements "click" sur le document
+    document.addEventListener('click', function(event) {
+        // Vérifie si l'événement de clic ne s'est pas produit à l'intérieur de l'élément
+        if (!element.contains(event.target)) {
+            // Supprime la classe de l'élément
+            element.classList.remove(className);
+        }else{
+            element.classList.toggle(className)
+        }
+    });
+    document.addEventListener('touch', function(event) {
+        // Vérifie si l'événement de clic ne s'est pas produit à l'intérieur de l'élément
+        if (!element.contains(event.target)) {
+            // Supprime la classe de l'élément
+            element.classList.remove(className);
+        }else{
+            element.classList.toggle(className)
+        }
+    });
+}
+
+classOnClickMGMT(document.getElementById('add'), "show");
+classOnClickMGMT(document.getElementById('setup'), "show");
