@@ -27,7 +27,7 @@ if ($countRoom > 0) {
     <h1><?php echo $data['name'];?></h1>
     <div class="cards-container">
         <?php
-        $accessoryQ = $db->query('SELECT name, type, icon, "on" FROM light WHERE room = '.$data['id'].' ORDER BY id ASC');
+        $accessoryQ = $db->query('SELECT id, name, type, icon, "on" FROM light WHERE room = '.$data['id'].' ORDER BY id ASC');
         $countAccessory = 0;
         while ($row = $accessoryQ->fetchArray()) {
             $countAccessory++;
@@ -35,7 +35,7 @@ if ($countRoom > 0) {
         if ($countAccessory > 0) {
             // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
             while ($accessory = $accessoryQ->fetchArray()) {
-                echo card_light($accessory['name'], $accessory['type'], "lightbulb", $accessory['on']);
+                echo card_light($accessory['name'], $accessory['type'], "lightbulb", $accessory['on'], $accessory['id']);
             }
         }
         else{
@@ -220,6 +220,18 @@ function sendForm() {
     }).then(result=>{console.log(result);});
 }
 <?php } ?>
+
+
+// Ecouteur d'événement pour le message socket.io
+socket.on('light', function(data) {
+    var element = document.getElementById('light_'+data.id);
+    if (data.value === 'ON') {
+      element.classList.add('active');
+    } else {
+      element.classList.remove('active');
+    }
+});
+
 </script>
 <script src="/js/index.js"></script>
 </html>

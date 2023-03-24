@@ -12,9 +12,26 @@ if(!is_null($mqtt_set)){
     exit(json_encode("MQTT already configured"));
 }
 
+if(isset($_POST['tls'])){
+    $tls = true;
+}else{
+    $tls = false;
+}
+
 if(isset($_POST['protocol']) && !empty($_POST['protocol'])){
     if($_POST['protocol'] == "mqtt" || $_POST['protocol'] == "ws"){
-        $protocol = $_POST['protocol'];
+        if($_POST['protocol'] == "mqtt" && $tls){
+            $protocol = "mqtts";
+        }
+        else if($_POST['protocol'] == "mqtt" && !$tls){
+            $protocol = "mqtt";
+        }
+        if($_POST['protocol'] == "ws" && $tls){
+            $protocol = "wss";
+        }
+        else if($_POST['protocol'] == "ws" && !$tls){
+            $protocol = "wss";
+        }
     }else{
         http_response_code(400);
         exit(json_encode("This protocol is not allowed"));
@@ -22,12 +39,6 @@ if(isset($_POST['protocol']) && !empty($_POST['protocol'])){
 }else{
     http_response_code(400);
     exit(json_encode("The protocol is missing"));
-}
-
-if(isset($_POST['tls'])){
-    $tls = "true";
-}else{
-    $tls = "false";
 }
 
 if(isset($_POST['check_cert'])){
@@ -70,9 +81,8 @@ if(isset($_POST['password']) && !empty($_POST['password'])){
     exit(json_encode("The password is missing"));
 }
 
-$insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_tls',:tls),('mqtt_check_cert',:check_cert),('mqtt_broker',:broker),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
+$insert = $db->prepare("INSERT INTO config ('name', 'value') VALUES ('mqtt_protocol',:protocol),('mqtt_check_cert',:check_cert),('mqtt_broker',:broker),('mqtt_port',:port), ('mqtt_username',:username), ('mqtt_password',:password)");
 $insert->bindValue('protocol', $protocol, SQLITE3_TEXT);
-$insert->bindValue('tls', $tls, SQLITE3_BLOB);
 $insert->bindValue('check_cert', $check_cert, SQLITE3_BLOB);
 $insert->bindValue('broker', $broker, SQLITE3_BLOB);
 $insert->bindValue('port', $port, SQLITE3_BLOB);

@@ -62,6 +62,15 @@ if(isset($_POST['payloadOff']) && !empty($_POST['payloadOff'])){
 
 require_once('co_bdd.php');
 
+$topic_usedQ = $db->prepare("SELECT COUNT(*) FROM light WHERE getOn= :getOn");
+$topic_usedQ->bindValue(':getOn', $getOn, SQLITE3_TEXT);
+$result = $topic_usedQ->execute();
+$topic_used = $result->fetchArray()[0] > 0;
+if($topic_used){
+    http_response_code(400);
+    exit(json_encode("There is already a topic that use this getOn topic"));
+}
+
 $insert = $db->prepare("INSERT INTO light ('name', 'room', 'type', 'icon', 'getOn', 'setOn', 'payloadOn', 'payloadOff') VALUES (:name, :room, :type, :icon, :getOn, :setOn, :payloadOn, :payloadOff)");
 $insert->bindValue('name', $name, SQLITE3_TEXT);
 $insert->bindValue('room', $room, SQLITE3_INTEGER);
@@ -72,3 +81,6 @@ $insert->bindValue('setOn', $setOn, SQLITE3_TEXT);
 $insert->bindValue('payloadOn', $payloadOn, SQLITE3_TEXT);
 $insert->bindValue('payloadOff', $payloadOff, SQLITE3_TEXT);
 $result = $insert-> execute();
+
+require_once(__DIR__.'/homeqtt-mgmt.php');
+restart_homeqtt();

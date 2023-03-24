@@ -10,10 +10,10 @@ function form_card_button($name, $type, $icon){
     return $card;
 }
 
-function card_light($name, $type, $icon, $on){
-    $card = "<div class='card light ";
-    if($on == 1){$card.="active";}
-    $card .= "'>
+function card_light($name, $type, $icon, $on, $id){
+    $card = "<div class='card light";
+    if($on == 1){$card.=" active";}
+    $card .= "' id='light_" . $id . "'>
         <div class='card-title'><span>" . $name . "</span></div>
             <div class='card-container action'>";
             $card .= file_get_contents(__DIR__ . "/img/svg/".$icon.".svg");
