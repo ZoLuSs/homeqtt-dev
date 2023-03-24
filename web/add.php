@@ -1,6 +1,8 @@
 <?php
 require_once('config/session.php');
 require_once("./lang/lang.php");
+require_once(__DIR__ . '/config/session.php');
+require_once(__DIR__ . "/card.php");
 ?>
 <!DOCTYPE html>
 <head>
@@ -28,8 +30,97 @@ require_once("./lang/lang.php");
                     <a class="button wide" href="/add"><?php echo ucfirst(general['back']);?></a>
                 <?php }
                 if($_GET['type'] == "accessory"){
+                    $roomQ = $db->query('SELECT id, name FROM room ORDER BY "order" ASC');
+                    $count = 0;
+                    while ($row = $roomQ->fetchArray()) {
+                        $count++;
+                    }
+                    if ($count > 0) {
+                        if(!isset($_POST['object'])){ ?>
+                            <h2><?php echo ucfirst(add["choosetypeof"]);?>: </h2>
+                            <form method="post" class="full-width">
+                                <div class="cards-container full-width">
+                                    <?php 
+                                    echo form_card_button(ucfirst(accessory["light"]),"light","lightbulb");
+                                    echo form_card_button(ucfirst(accessory["weather-station"]),"weather-station","weather-station");
+                                    echo form_card_button(ucfirst(accessory["temperature"]),"temperature","temperature");
+                                    echo form_card_button(ucfirst(accessory["humidity"]),"humidity","humidity");
+                                    echo form_card_button(ucfirst(accessory["energy"]),"energy","energy");                            
+                                    ?>
+                                </div>
+                            </form>
+                            <a class="button wide" href="/add"><?php echo ucfirst(general['back']);?></a>
+                        <?php 
+                        }
+                        if($_GET['type'] == "accessory" && isset($_POST['object']) && !is_null($_POST['object'])){ ?>
+                            <h2><?php echo ucfirst(add["add".$_POST['object']]);?>: </h2>
+                            <form id="form">
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(general["name"]);?></label>
+                                    <input type="text" name="name" placeholder="Office">
+                                </div>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["chooseroom"]);?></label>
+                                    <select name="room" id="">
+                                        <?php
+                                         while ($data = $roomQ->fetchArray()) { 
+                                            echo "<option value='".$data['id']."'>".$data['name']."</option>";
+                                         }
+                                        ?>
+                                    </select>
+                                </div>
+                            <?php if($_POST['object'] == "light"){
+                                $form=true;$form_url="/config/add-light";$goto="/";
+                                ?>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["typeOfLight"]);?></label>
+                                    <select name="type" id="">
+                                        <option value='simple'>Simple - ON / OFF</option>
+                                        <option value='dimmablePercentage' disabled>Dimmable - 0% / 100%</option>
+                                        <option value='cct' disabled>CCT - Cold / Warm / Dimmable</option>
+                                        <option value='rgbHue' disabled>RGB - Hue / Sat / CT</option>
+                                        <option value='rgbDimmable' disabled>RGBW - Hue / Sat / CT / Dimmable</option>
+                                        <option value='rgbcct' disabled>RGBCCT - Hue / Sat / Cold / Warm / Dimmable</option>
+                                    </select>
+                                </div>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["setontopic"]);?></label>
+                                    <input type="text" name="setOn" placeholder="light/room/seton">
+                                </div>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["getontopic"]);?></label>
+                                    <input type="text" name="getOn" placeholder="light/room/geton">
+                                </div>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["payloadon"]);?></label>
+                                    <input type="text" name="payloadOn" placeholder="ON">
+                                </div>
+                                <div class="input-container">
+                                    <label for=""><?php echo ucfirst(add["payloadoff"]);?></label>
+                                    <input type="text" name="payloadOff" placeholder="OFF">
+                                </div>
+                            <?php }
+                                if($_POST['object'] == "weather-station"){
 
+                                } ?>
+                            </form>
+                            <a class="button wide" id="submit"><?php echo ucfirst(general["add"]);?></a>
+                            <a class="button wide" href="/add?type=accessory"><?php echo ucfirst(general['back']);?></a>
+                            <?php
+                        }
+                    }
+                    else{ ?>
+                        <div class="segment">
+                        <h1><?php echo ucfirst(general['noroomcreated']);?></h1>
+                        <div class="cards-container">
+                            <h2><?php echo ucfirst(add['roomneeded']);?></h2>
+                        </div>
+                        <a class="button wide" href="/add"><?php echo ucfirst(general['back']);?></a>
+                    </div>
+                    <?php 
+                    }
                 }
+
             }
             else{ ?>
                 <h2><?php echo ucfirst(add["whatadd"]);?></h2>

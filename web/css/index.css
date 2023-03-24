@@ -20,6 +20,10 @@ body{
     -webkit-user-select: none;
 }
 
+button {
+    border: none;
+  }
+
 .logo{
     margin: 5px;
 }
@@ -163,8 +167,13 @@ a{
     flex-wrap: wrap;
 }
 
+.cards-container.full-width{
+    width: 100%;
+}
+
 .card{
     background-color: rgba(50, 50, 50, 0.5);
+    color: white;
     width: 150px;
     height: 150px;
     border-radius: 10px;
@@ -203,13 +212,13 @@ a{
     color: black;
 }
 
-.card.light svg{
+.card.light svg, .card.light svg path, .card.light rect{
     fill:#fecb3e;
 }
 
-.card.light.active{
+.card.light.active, .card.light.active svg path, .card.light.active rect{
     background-color: #fecb3e;
-    color: white;
+    fill: white;
  }
 
  .card.light.active svg{
@@ -312,6 +321,10 @@ a{
 
 form{
     width: 350px;
+}
+
+form.full-width{
+    width: 100%;
 }
 
 form .input-container{

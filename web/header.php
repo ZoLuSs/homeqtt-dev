@@ -17,7 +17,9 @@ $housename = $db->querySingle('SELECT value FROM config WHERE name="house_name"'
     <div class="right-container">
         <div class="dropdown" id="add">
             <a class="button no-background" >
-                <img src="/img/svg/plus.svg" alt="plus" height="25" width="25" />
+                <svg width="25" height="25">
+                    <?php echo file_get_contents(__DIR__ . "/img/svg/plus.svg"); ?>
+                </svg>
             </a>
             <div class="dropdown-container">
                 <a class="button" href="/add?type=room"><?php echo ucfirst(add['addroom']);?></a>
@@ -27,7 +29,9 @@ $housename = $db->querySingle('SELECT value FROM config WHERE name="house_name"'
 
         <div class="dropdown" id="setup">
             <a class="button no-background" >
-                <img src="/img/svg/option.svg" alt="option" height="30" width="30" />
+                <svg width="30" height="30">
+                    <?php echo file_get_contents(__DIR__ . "/img/svg/option.svg"); ?>
+                </svg>
             </a>
             <div class="dropdown-container">
                 <a class="button" href="/setup/room">Room settings</a>

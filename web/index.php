@@ -1,6 +1,7 @@
 <?php
 require_once('config/session.php');
 require_once("./lang/lang.php");
+require_once(__DIR__ . "/card.php");
 ?>
 <!DOCTYPE html>
 <head>
@@ -13,17 +14,35 @@ require_once("./lang/lang.php");
 </head>
 <body>
 <?php require_once("header.php");
-$roomQ = $db->query('SELECT name FROM room ORDER BY "order" ASC');
-
-// Vérifie si la requête a retourné des résultats
-if ($roomQ->numColumns() > 0) {
+$roomQ = $db->query('SELECT id, name FROM room ORDER BY "order" ASC');
+$countRoom = 0;
+while ($row = $roomQ->fetchArray()) {
+    $countRoom++;
+}
+if ($countRoom > 0) {
     // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
     while ($data = $roomQ->fetchArray()) {
         ?>
 <div class="segment">
     <h1><?php echo $data['name'];?></h1>
     <div class="cards-container">
-        <h2><?php echo ucfirst(general['nodeviceadded']);?></h2>
+        <?php
+        $accessoryQ = $db->query('SELECT name, type, icon, "on" FROM light WHERE room = '.$data['id'].' ORDER BY id ASC');
+        $countAccessory = 0;
+        while ($row = $accessoryQ->fetchArray()) {
+            $countAccessory++;
+        }
+        if ($countAccessory > 0) {
+            // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
+            while ($accessory = $accessoryQ->fetchArray()) {
+                echo card_light($accessory['name'], $accessory['type'], "lightbulb", $accessory['on']);
+            }
+        }
+        else{
+            echo "<h2>".ucfirst(general['nodeviceadded'])."</h2>";
+        }
+        ?>
+        
     </div>
 </div>
 <?php
@@ -162,8 +181,16 @@ else{ ?>
         </div>
     </div>
 </body>
-<?php if(isset($form_url) && !empty($form_url)){ ?>
 <script>
+const token = "<?php 
+require_once(__DIR__ . "/config/jwt.php");
+$jwt = generate_jwt("payload");
+echo $jwt;?>";
+const socket = io.connect('http://<?php echo $_SERVER['HTTP_HOST']; ?>', {
+  query: {token}
+});
+
+<?php if(isset($form_url) && !empty($form_url)){ ?>
 document.getElementById("submit").addEventListener("click", sendForm);
 loading = document.getElementById("modal-loader");
 function sendForm() {
@@ -192,16 +219,7 @@ function sendForm() {
         return response.json();
     }).then(result=>{console.log(result);});
 }
-</script>
 <?php } ?>
-<script>
-const token = "<?php 
-require_once(__DIR__ . "/config/jwt.php");
-$jwt = generate_jwt("payload");
-echo $jwt;?>";
-const socket = io.connect('http://<?php echo $_SERVER['SERVER_NAME']; ?>:4001', {
-  query: {token}
-});
 </script>
 <script src="/js/index.js"></script>
 </html>

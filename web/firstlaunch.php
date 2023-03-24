@@ -25,7 +25,7 @@
                         $houseQ = $db->query("SELECT name, value FROM config WHERE name LIKE 'house_%'");
                         $house = $houseQ->fetchArray();
                         $status = exec("sudo systemctl is-active homeqtt");
-                        if($house && $status != "active"){$form=false;$form_url="/config/check";?>
+                        if($house && $status != "active"){$form=false;$form_url="/config/check";$goto="/firstlaunch"?>
                             <h2><?php echo firstlaunch["setupdone"];?></h2>
                         <a class="button wide" id="submit"><?php echo firstlaunch["checkandlaunch"];?></a>
                         <?php }

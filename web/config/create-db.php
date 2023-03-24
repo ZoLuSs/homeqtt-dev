@@ -27,10 +27,14 @@ if (!file_exists('../../homeqtt.db')) {
     );
     CREATE TABLE "light" (
         "id"	INTEGER,
+        "room" INTEGER,
+        "name" TEXT,
         "type"	TEXT,
-        "icon"	INTEGER,
+        "icon"	TEXT,
         "getOn"	TEXT,
         "setOn"	TEXT,
+        "payloadOn" TEXT,
+        "payloadOff" TEXT,
         "on"    INTEGER,
         PRIMARY KEY("id" AUTOINCREMENT)
     );
