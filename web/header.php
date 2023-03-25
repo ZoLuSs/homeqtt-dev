@@ -2,6 +2,7 @@
 require_once('config/co_bdd.php');
 $housename = $db->querySingle('SELECT value FROM config WHERE name="house_name"');
 ?>
+<div id="notifications"></div>
 <div class="header">
     <div class="left-container">
         <a href="/" class="title button no-background">

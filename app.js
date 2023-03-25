@@ -45,6 +45,10 @@ io.use(function(socket, next){
   socket.on('message', function(message) {
     io.emit('message', message);
   });
+
+  socket.on('getStatus', function(message) {
+    console.log('Message reçu:', message);
+  })
 });
 
 io.listen(4002);
@@ -96,8 +100,8 @@ async function getAllTopic() {
 (async function() {
   try {
     const config = await getMqttConfig();
-    const client = mqtt.connect(config.url, config.options);
     const allTopic = await getAllTopic();
+    const client = mqtt.connect(config.url, config.options);
     //console.log(allTopic);
 
     client.on('connect', () => {

@@ -57,3 +57,62 @@ function classOnClickMGMT(element, className) {
 
 classOnClickMGMT(document.getElementById('add'), "show");
 classOnClickMGMT(document.getElementById('setup'), "show");
+
+let notificationCount = 0;
+const notificationMargin = 10;
+const notificationHeight = 50;
+
+function showNotification(message, level, duration) {
+  const notifications = document.getElementById("notifications");
+
+  // Créer une nouvelle notification
+  const notification = document.createElement("div");
+  notification.classList.add("notification");
+  notification.classList.add(level);
+  notification.textContent = message;
+
+  // Ajouter un attribut CSS pour positionner la notification
+  notification.style.setProperty("--index", notificationCount + 1);
+
+  // Ajouter la notification à la liste des notifications
+  notifications.appendChild(notification);
+
+  // Animer l'affichage de la notification
+  setTimeout(() => {
+    notification.style.opacity = 1;
+  }, 100);
+
+  // Cacher la notification après un certain temps
+  if (duration > 0) {
+    setTimeout(() => {
+      hideNotification(notification);
+    }, duration);
+  }
+
+  // Ajouter un gestionnaire d'événements pour cacher la notification lorsque l'utilisateur clique dessus
+  notification.addEventListener("click", () => {
+    hideNotification(notification);
+  });
+
+  // Incrémenter le compteur de notifications
+  notificationCount++;
+}
+
+function hideNotification(notification) {
+  // Animer la disparition de la notification
+  notification.style.opacity = 0;
+
+  // Supprimer la notification du DOM après l'animation
+  setTimeout(() => {
+    notification.parentNode.removeChild(notification);
+
+    // Décrémenter le compteur de notifications
+    notificationCount--;
+
+    // Réajuster la position des notifications restantes
+    const notifications = document.querySelectorAll(".notification");
+    for (let i = 0; i < notifications.length; i++) {
+      notifications[i].style.setProperty("--index", i + 1);
+    }
+  }, 300);
+}

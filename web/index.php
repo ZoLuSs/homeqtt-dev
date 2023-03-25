@@ -21,6 +21,10 @@ while ($row = $roomQ->fetchArray()) {
 }
 if ($countRoom > 0) {
     // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
+    $topicArray = array(
+        "light" => array(),
+        "station" => array()
+    );
     while ($data = $roomQ->fetchArray()) {
         ?>
 <div class="segment">
@@ -35,6 +39,7 @@ if ($countRoom > 0) {
         if ($countAccessory > 0) {
             // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
             while ($accessory = $accessoryQ->fetchArray()) {
+                array_push($topicArray["light"], array("id" => 1));
                 echo card_light($accessory['name'], $accessory['type'], "lightbulb", $accessory['on'], $accessory['id']);
             }
         }
@@ -175,11 +180,11 @@ else{ ?>
         </div>
     </div>
 </div>
-    <div class="modal" id="modal-loader">
-        <div class="modal-container">
-            <span class="loader"></span>
-        </div>
+<div class="modal" id="modal">
+    <div class="modal-container">
+        <span class="loader"></span>
     </div>
+</div>
 </body>
 <script>
 const token = "<?php 
@@ -190,9 +195,11 @@ const socket = io.connect('http://<?php echo $_SERVER['HTTP_HOST']; ?>', {
   query: {token}
 });
 
+loading = document.getElementById("modal");
+loading.style.display = "flex";
+
 <?php if(isset($form_url) && !empty($form_url)){ ?>
 document.getElementById("submit").addEventListener("click", sendForm);
-loading = document.getElementById("modal-loader");
 function sendForm() {
     loading.style.display = "flex";
     <?php if(isset($form) && $form){ ?>
@@ -219,19 +226,12 @@ function sendForm() {
         return response.json();
     }).then(result=>{console.log(result);});
 }
-<?php } ?>
+<?php } 
+echo "var myArray = " . json_encode($topicArray) . ";";
+?>
 
-
-// Ecouteur d'événement pour le message socket.io
-socket.on('light', function(data) {
-    var element = document.getElementById('light_'+data.id);
-    if (data.value === 'ON') {
-      element.classList.add('active');
-    } else {
-      element.classList.remove('active');
-    }
-});
 
 </script>
 <script src="/js/index.js"></script>
+<script src="/js/socket.js"></script>
 </html>
