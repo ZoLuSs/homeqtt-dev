@@ -30,7 +30,7 @@ require_once(__DIR__ . "/card.php");
                     <a class="button wide" href="/add"><?php echo ucfirst(general['back']);?></a>
                 <?php }
                 if($_GET['type'] == "accessory"){
-                    $roomQ = $db->query('SELECT id, name FROM room ORDER BY "order" ASC');
+                    $roomQ = $db->query('SELECT room_id, room_name FROM rooms ORDER BY "order" ASC');
                     $count = 0;
                     while ($row = $roomQ->fetchArray()) {
                         $count++;
@@ -64,7 +64,7 @@ require_once(__DIR__ . "/card.php");
                                     <select name="room" id="">
                                         <?php
                                          while ($data = $roomQ->fetchArray()) { 
-                                            echo "<option value='".$data['id']."'>".$data['name']."</option>";
+                                            echo "<option value='".$data['room_id']."'>".$data['room_name']."</option>";
                                          }
                                         ?>
                                     </select>

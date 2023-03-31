@@ -20,10 +20,14 @@ require_once(__DIR__ . "/../lang/lang.php");
 <?php require_once(__DIR__ . "/../header.php");?>
 <div class="container">
 <?php
-$roomQ = $db->query('SELECT name FROM room ORDER BY "order" ASC');
 
+$roomQ = $db->query('SELECT room_name FROM rooms ORDER BY "order" ASC');
+$countRoom = 0;
+while ($row = $roomQ->fetchArray()) {
+    $countRoom++;
+}
 // Vérifie si la requête a retourné des résultats
-if ($roomQ->numColumns() > 0) {
+if ($countRoom > 0) {
     $form=true;$form_url="/config/update-room";$goto="/";
     ?>
     <div class="segment">
@@ -38,7 +42,7 @@ if ($roomQ->numColumns() > 0) {
     while ($data = $roomQ->fetchArray()) {
         ?>
             <tr draggable="true">
-              <td class="col-1"><?php echo $data['name'];?></td>
+              <td class="col-1"><?php echo $data['room_name'];?></td>
               <td class="col-2">
                 <a class="button">Renommer</a>
                 <a class="button">Supprimer</a>
@@ -55,9 +59,6 @@ if ($roomQ->numColumns() > 0) {
 else{ ?>
 <div class="segment">
     <h1><?php echo ucfirst(general['noroomcreated']);?></h1>
-    <div class="cards-container">
-        <h2><?php echo ucfirst(general['nodeviceadded']);?></h2>
-    </div>
 </div>
 <?php } ?>
 </div>

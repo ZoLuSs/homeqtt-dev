@@ -18,17 +18,17 @@ if(isset($_POST['name']) && !empty($_POST['name'])){
 }
 
 if(isset($_POST['room']) && !empty($_POST['room'])){
-    $room = $_POST['room'];
+    $room_id = $_POST['room'];
 }else{
     http_response_code(400);
     exit(json_encode("Room is missing"));
 }
 
 if(isset($_POST['type']) && !empty($_POST['type'])){
-    $type = $_POST['type'];
+    $type_detail = $_POST['type'];
 }else{
     http_response_code(400);
-    exit(json_encode("Room is missing"));
+    exit(json_encode("Type is missing"));
 }
 
 if(isset($_POST['setOn']) && !empty($_POST['setOn'])){
@@ -61,7 +61,7 @@ if(isset($_POST['payloadOff']) && !empty($_POST['payloadOff'])){
 
 
 require_once('co_bdd.php');
-
+/*
 $topic_usedQ = $db->prepare("SELECT COUNT(*) FROM light WHERE getOn= :getOn");
 $topic_usedQ->bindValue(':getOn', $getOn, SQLITE3_TEXT);
 $result = $topic_usedQ->execute();
@@ -81,6 +81,56 @@ $insert->bindValue('setOn', $setOn, SQLITE3_TEXT);
 $insert->bindValue('payloadOn', $payloadOn, SQLITE3_TEXT);
 $insert->bindValue('payloadOff', $payloadOff, SQLITE3_TEXT);
 $result = $insert-> execute();
+*/
+
+// Préparation de la requête d'insertion dans la table Accessories
+$insertAccessory = $db->prepare('INSERT INTO accessories (accessory_name, accessory_type, accessory_type_detail, room_id) VALUES (:accessory_name, :accessory_type, :accessory_type_detail, :room_id)');
+
+// Liaison des valeurs à insérer avec les paramètres de la requête
+$insertAccessory->bindValue(':accessory_name', $name);
+$insertAccessory->bindValue(':accessory_type', 'light');
+$insertAccessory->bindValue(':accessory_type_detail', $type_detail);
+$insertAccessory->bindValue(':room_id', $room_id);
+$insertAccessory->execute();
+// Récupération de l'identifiant de l'accessoire inséré
+$accessoryId = $db->lastInsertRowID();
+
+/// Add topic getOn
+$insertTopic = $db->prepare('INSERT INTO topics (topic_name, topic_type, accessory_id) VALUES (:topic_name, :topic_type, :accessory_id)');
+$insertTopic->bindValue(':topic_name', $getOn);
+$insertTopic->bindValue(':topic_type', 'getOn');
+$insertTopic->bindValue(':accessory_id', $accessoryId);
+$insertTopic->execute();
+// Récupération de l'identifiant de l'accessoire inséré
+$topicId = $db->lastInsertRowID();
+
+/// Add topic setOn
+$insertTopic = $db->prepare('INSERT INTO topics (topic_name, topic_type, accessory_id) VALUES (:topic_name, :topic_type, :accessory_id)');
+$insertTopic->bindValue(':topic_name', $setOn);
+$insertTopic->bindValue(':topic_type', 'setOn');
+$insertTopic->bindValue(':accessory_id', $accessoryId);
+$insertTopic->execute();
+
+/// Add parameters
+$insertParameter = $db->prepare('INSERT INTO parameters (parameters_name, parameters_value, accessory_id) VALUES (:parameters_name, :parameters_value, :accessory_id)');
+$insertParameter->bindValue(':parameters_name', 'payloadOn');
+$insertParameter->bindValue(':parameters_value', $payloadOn);
+$insertParameter->bindValue(':accessory_id', $accessoryId);
+$insertParameter->execute();
+$insertParameter = $db->prepare('INSERT INTO parameters (parameters_name, parameters_value, accessory_id) VALUES (:parameters_name, :parameters_value, :accessory_id)');
+$insertParameter->bindValue(':parameters_name', 'payloadOff');
+$insertParameter->bindValue(':parameters_value', $payloadOff);
+$insertParameter->bindValue(':accessory_id', $accessoryId);
+$insertParameter->execute();
+
+/// Add value
+$insertParameter = $db->prepare('INSERT INTO "values" (value_name, value, accessory_id, timestamp, topic_id) VALUES (:value_name, :value, :accessory_id, :timestamp, :topic_id)');
+$insertParameter->bindValue(':value_name', "on");
+$insertParameter->bindValue(':value', 0);
+$insertParameter->bindValue(':accessory_id', $accessoryId);
+$insertParameter->bindValue(':parameters_value', $payloadOn);
+$insertParameter->bindValue(':topic_id', $topicId);
+$insertParameter->execute();
 
 require_once(__DIR__.'/homeqtt-mgmt.php');
 restart_homeqtt();

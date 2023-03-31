@@ -19,7 +19,7 @@ if(isset($_POST['name']) && !empty($_POST['name'])){
 
 require_once('co_bdd.php');
 
-$room_existQ = $db->prepare("SELECT COUNT(*) FROM room WHERE name= :name");
+$room_existQ = $db->prepare("SELECT COUNT(*) FROM rooms WHERE room_name= :name");
 $room_existQ->bindValue(':name', $name, SQLITE3_TEXT);
 $result = $room_existQ->execute();
 $room_exist = $result->fetchArray()[0] > 0;
@@ -28,7 +28,7 @@ if($room_exist){
     exit(json_encode("There is already a room with this name !"));
 }
 
-$room_lastorderQ = $db->query('SELECT MAX("order") as max_order FROM room');
+$room_lastorderQ = $db->query('SELECT MAX("order") as max_order FROM rooms');
 $result = $room_lastorderQ->fetchArray();
 $room_lastorder = $result['max_order'];
 
@@ -38,7 +38,7 @@ if(is_null($room_lastorder)){
     $order = ++$room_lastorder ;
 }
 
-$insert = $db->prepare("INSERT INTO room ('name', 'order') VALUES (:name, :order)");
-$insert->bindValue('name', $name, SQLITE3_TEXT);
+$insert = $db->prepare("INSERT INTO rooms ('room_name', 'order') VALUES (:room_name, :order)");
+$insert->bindValue('room_name', $name, SQLITE3_TEXT);
 $insert->bindValue('order', $order, SQLITE3_INTEGER);
 $result = $insert-> execute();

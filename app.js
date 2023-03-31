@@ -4,6 +4,7 @@ process.chdir(__dirname);
 const sqlite3 = require('sqlite3');
 const { Server } = require("socket.io");
 const jwt = require('jsonwebtoken');
+const database = require('./lib/database');
 
 const io = new Server({ /* options */ });
 let JWT_KEY;
@@ -46,8 +47,36 @@ io.use(function(socket, next){
     io.emit('message', message);
   });
 
-  socket.on('getStatus', function(message) {
-    console.log('Message reçu:', message);
+  socket.on('getStatus', async function(message) {
+    console.log('getStatus:', message);
+      // Analyse de la donnée reçue par websocket pour extraire les IDs des lumières
+      //const receivedData = JSON.parse(message);
+      /*const receivedData = message;
+      const receivedLightIds = receivedData.light.map(item => item.id); 
+
+      // Récupération de la liste de toutes les lumières depuis la base de données
+      const lightStatus = {};
+      //console.log(receivedData);
+      console.log(receivedLightIds);
+
+        await db.all(`SELECT id, status FROM light WHERE id IN (${receivedLightIds.join(',')})`, (err, rows) => {
+            rows.forEach((row) => {
+              lightStatus[row.id] = {
+                id: row.id,
+                value: row.status
+              };
+            });
+          
+        });
+
+        // Envoyer les données
+        message.light.forEach((light) => {
+          const status = lightStatus[light.id];
+          if (status) {
+            io.emit('light', status);
+          }
+        });*/
+
   })
 });
 
@@ -81,8 +110,17 @@ async function getMqttConfig() {
 
 async function getAllTopic() {
   return new Promise((resolve, reject) => {
-    var topic = {light: []};
-    db.all("SELECT id, getOn, payloadOn, payloadOff FROM light", function(err, rows) {
+    var topics = [];
+    db.all("SELECT * FROM topics WHERE topic_type LIKE 'get%'", (err, rows) => {
+      if (err) {
+        console.error(err.message);
+      }
+      rows.forEach((row) => {
+        topics.push(row.topic_name);
+      });
+    });
+
+    /*db.all("SELECT id, getOn, payloadOn, payloadOff FROM light", function(err, rows) {
       if (err) {
         console.error(err.message);
       } else {
@@ -93,7 +131,8 @@ async function getAllTopic() {
         });
         resolve(topic);
       }
-    });
+    });*/
+    resolve(topics);
   });
 }
 
@@ -106,15 +145,11 @@ async function getAllTopic() {
 
     client.on('connect', () => {
       console.log('Client MQTT connecté');
-      allTopic.light.forEach((item, index) => {
-        thisTopic = item[1];
-        client.subscribe(thisTopic, function (err) {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(`Souscription au topic ${thisTopic} réussie`);
-          }
-        });
+      client.subscribe(allTopic, function (err) {
+        if (!err) {
+          console.log(`Souscription aux topics suivant réussie:`);
+          allTopic.forEach(topic => console.log(topic));
+        }
       });
     });
 
@@ -131,12 +166,29 @@ async function getAllTopic() {
     });
 
     // Gérer les événements de messages du client MQTT
-    client.on('message', function (topic, message) {
-      console.log('Message reçu:', topic, message.toString());
-      const entry = allTopic.light.find(entry => entry.includes(topic));
-      if (entry) {
-        const value = entry[0];
-        io.emit('light', {id: entry[0], value: message.toString()});
+    client.on('message', async function (topic, message) {
+      //console.log('Message reçu:', topic, message.toString());
+      try{
+        const accessoryId = await database.getAccessoryIdFromTopic(topic);
+        const accessoryType = await database.getAccessoryTypeFromAccessoryId(accessoryId);
+
+        switch (accessoryType) {
+          case "light":
+            const rowOn = await database.getParameterByAccessoryIdAndName(accessoryId, "payloadOn");
+            const rowOff = await database.getParameterByAccessoryIdAndName(accessoryId, "payloadOff");
+            if (rowOn.parameters_value === message.toString()) {
+              await database.updateValueByValueNameAndAccessoryId(accessoryId, 'on', 1);
+              io.emit('accessory', {id: accessoryId, type: accessoryType, valueName: 'on', value: 1});
+            } else if (rowOff.parameters_value === message.toString()) {
+              await database.updateValueByValueNameAndAccessoryId(accessoryId, 'on', 0);
+              io.emit('accessory', {id: accessoryId, type: accessoryType, valueName: 'on', value: 0});
+            } else {
+              console.log("Le message ne correspond à aucune valeur de parameter_value");
+            }
+            break;
+        }
+      } catch(err){
+        console.error(err);
       }
     });
   } catch (err) {
@@ -144,3 +196,5 @@ async function getAllTopic() {
     process.exit(1);
   }
 })();
+
+//

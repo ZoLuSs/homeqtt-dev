@@ -1,20 +1,28 @@
 // Ecouteur d'événement pour le message socket.io
-socket.on('light', function(data) {
-    var element = document.getElementById('light_'+data.id);
-    if (data.value === 'ON') {
-      element.classList.add('active');
-    } else {
-      element.classList.remove('active');
+socket.on('accessory', function(data) {
+    const element = document.getElementById(`accessory_${data.id}`);
+    switch (data.type){
+        case "light":
+            switch(data.valueName){
+                case "on":
+                    if (data.value) {
+                        element.classList.add('active');
+                    } else {
+                        element.classList.remove('active');
+                    }
+                    break;
+            }
+            break;
     }
 });
 
 socket.on('connect', () => {
-    console.log('Client MQTT connecté');
     showNotification("Connexion réussie", "success", 3000);
     loading.style.display = "none";
     if (myArray) {
         // Envoi du tableau avec socket.io vers "getStatus"
         console.log("myArray exist");
+        console.log(myArray);
         socket.emit("getStatus", myArray);
       }
 });

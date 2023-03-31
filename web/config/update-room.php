@@ -21,7 +21,7 @@ if(empty($array)){
 require_once('co_bdd.php');
 
 foreach($array as $data) {
-    $room_existQ = $db->prepare("UPDATE room SET `order` = :order WHERE name = :name");
+    $room_existQ = $db->prepare("UPDATE rooms SET `order` = :order WHERE room_name = :name");
     $room_existQ->bindValue(':name', $data[0], SQLITE3_TEXT);
     $room_existQ->bindValue(':order', $data[1], SQLITE3_INTEGER);
     $result = $room_existQ->execute();

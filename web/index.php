@@ -14,33 +14,40 @@ require_once(__DIR__ . "/card.php");
 </head>
 <body>
 <?php require_once("header.php");
-$roomQ = $db->query('SELECT id, name FROM room ORDER BY "order" ASC');
+$roomQ = $db->query('SELECT room_id, room_name FROM rooms ORDER BY "order" ASC');
 $countRoom = 0;
 while ($row = $roomQ->fetchArray()) {
     $countRoom++;
 }
 if ($countRoom > 0) {
-    // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
-    $topicArray = array(
-        "light" => array(),
-        "station" => array()
-    );
+    $accessoryList = array();
     while ($data = $roomQ->fetchArray()) {
         ?>
 <div class="segment">
-    <h1><?php echo $data['name'];?></h1>
+    <h1><?php echo $data['room_name'];?></h1>
     <div class="cards-container">
         <?php
-        $accessoryQ = $db->query('SELECT id, name, type, icon, "on" FROM light WHERE room = '.$data['id'].' ORDER BY id ASC');
-        $countAccessory = 0;
-        while ($row = $accessoryQ->fetchArray()) {
-            $countAccessory++;
+        $accessoryaQ = $db->query('SELECT * FROM accessories WHERE room_id = '.$data['room_id'].'
+        ORDER BY accessory_id ASC');
+        $countAccessory2 = 0;
+        while ($row = $accessoryaQ->fetchArray()) {
+            $countAccessory2++;
         }
-        if ($countAccessory > 0) {
-            // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
-            while ($accessory = $accessoryQ->fetchArray()) {
-                array_push($topicArray["light"], array("id" => 1));
-                echo card_light($accessory['name'], $accessory['type'], "lightbulb", $accessory['on'], $accessory['id']);
+        if ($countAccessory2 > 0) {
+            while ($accessory = $accessoryaQ->fetchArray()) {
+                $values = $db->query('SELECT * FROM "values" WHERE accessory_id = '.$accessory['accessory_id']);
+                $valuesArray = array();
+                while ($row = $values->fetchArray()) {
+                    $valuesArray[$row['value_name']] = $row['value'];
+                }
+                array_push($accessoryList, $accessory['accessory_id']);
+                switch($accessory['accessory_type']){
+                    case "light":
+                        switch($accessory['accessory_type_detail']){
+                            case "simple":
+                                echo card_light($accessory['accessory_name'], $accessory['accessory_type'], "lightbulb", $valuesArray["on"], $accessory['accessory_id']);
+                        }
+                }
             }
         }
         else{
@@ -229,7 +236,6 @@ function sendForm() {
 <?php } 
 echo "var myArray = " . json_encode($topicArray) . ";";
 ?>
-
 
 </script>
 <script src="/js/index.js"></script>
