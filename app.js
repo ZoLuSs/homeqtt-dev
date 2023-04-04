@@ -42,41 +42,24 @@ io.use(function(socket, next){
   }    
 })
 .on('connection', function(socket) {
-  // Connection now authenticated to receive further events
   socket.on('message', function(message) {
     io.emit('message', message);
   });
 
   socket.on('getStatus', async function(message) {
-    console.log('getStatus:', message);
-      // Analyse de la donnée reçue par websocket pour extraire les IDs des lumières
-      //const receivedData = JSON.parse(message);
-      /*const receivedData = message;
-      const receivedLightIds = receivedData.light.map(item => item.id); 
-
-      // Récupération de la liste de toutes les lumières depuis la base de données
-      const lightStatus = {};
-      //console.log(receivedData);
-      console.log(receivedLightIds);
-
-        await db.all(`SELECT id, status FROM light WHERE id IN (${receivedLightIds.join(',')})`, (err, rows) => {
-            rows.forEach((row) => {
-              lightStatus[row.id] = {
-                id: row.id,
-                value: row.status
-              };
-            });
-          
-        });
-
-        // Envoyer les données
-        message.light.forEach((light) => {
-          const status = lightStatus[light.id];
-          if (status) {
-            io.emit('light', status);
-          }
-        });*/
-
+    if(message.length > 0){
+      let status = [];
+      for (const accessoryId of message) {
+        const accessoryType = await database.getAccessoryTypeFromAccessoryId(accessoryId);
+        switch (accessoryType) {
+          case "light":
+            const state = await database.getValueByAccessoryIdAndName(accessoryId, "on");
+            status.push({id: accessoryId, type: accessoryType, valueName: 'on', value: parseInt(state)});
+            break;
+        }
+      }
+      io.emit('accessory', status);
+    }
   })
 });
 
@@ -119,19 +102,6 @@ async function getAllTopic() {
         topics.push(row.topic_name);
       });
     });
-
-    /*db.all("SELECT id, getOn, payloadOn, payloadOff FROM light", function(err, rows) {
-      if (err) {
-        console.error(err.message);
-      } else {
-        // Parcours de toutes les valeurs "getOn" de la table
-        rows.forEach(function(row) {
-          // Création du topic MQTT correspondant à la valeur "getOn"
-          topic.light.push([row.id, row.getOn, row.payloadOn, row.payloadOff]);
-        });
-        resolve(topic);
-      }
-    });*/
     resolve(topics);
   });
 }
@@ -167,19 +137,28 @@ async function getAllTopic() {
 
     // Gérer les événements de messages du client MQTT
     client.on('message', async function (topic, message) {
-      //console.log('Message reçu:', topic, message.toString());
       try{
         const accessoryId = await database.getAccessoryIdFromTopic(topic);
+        const payloadFormater = await database.getPayloadFormater(topic);
         const accessoryType = await database.getAccessoryTypeFromAccessoryId(accessoryId);
-
+        let data;
+        if(payloadFormater){
+          let msg = JSON.parse(message.toString());
+          const Formater = new Function('msg', payloadFormater);
+          data = Formater(msg);
+        }
+        else{
+          data = message.toString();
+        }
+        
         switch (accessoryType) {
           case "light":
             const rowOn = await database.getParameterByAccessoryIdAndName(accessoryId, "payloadOn");
             const rowOff = await database.getParameterByAccessoryIdAndName(accessoryId, "payloadOff");
-            if (rowOn.parameters_value === message.toString()) {
+            if (rowOn.parameters_value === data) {
               await database.updateValueByValueNameAndAccessoryId(accessoryId, 'on', 1);
               io.emit('accessory', {id: accessoryId, type: accessoryType, valueName: 'on', value: 1});
-            } else if (rowOff.parameters_value === message.toString()) {
+            } else if (rowOff.parameters_value === data) {
               await database.updateValueByValueNameAndAccessoryId(accessoryId, 'on', 0);
               io.emit('accessory', {id: accessoryId, type: accessoryType, valueName: 'on', value: 0});
             } else {
@@ -196,5 +175,3 @@ async function getAllTopic() {
     process.exit(1);
   }
 })();
-
-//

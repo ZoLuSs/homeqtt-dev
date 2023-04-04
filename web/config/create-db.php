@@ -46,8 +46,7 @@ if (!file_exists('../../homeqtt.db')) {
         topic_id INTEGER PRIMARY KEY,
         topic_name TEXT,
         topic_type TEXT,
-        payload_get_formater TEXT,
-        payload_set_formater TEXT,
+        payload_formatter TEXT,
         accessory_id INTEGER,
         FOREIGN KEY (accessory_id) REFERENCES accessories(accessory_id)
     )");

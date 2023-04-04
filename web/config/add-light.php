@@ -45,6 +45,10 @@ if(isset($_POST['getOn']) && !empty($_POST['getOn'])){
     exit(json_encode("getOn is missing"));
 }
 
+if(isset($_POST['payloadFormatter']) && !empty($_POST['payloadFormatter'])){
+    $payloadFormatter = $_POST['payloadFormatter'];
+}
+
 if(isset($_POST['payloadOn']) && !empty($_POST['payloadOn'])){
     $payloadOn = $_POST['payloadOn'];
 }else{
@@ -96,9 +100,14 @@ $insertAccessory->execute();
 $accessoryId = $db->lastInsertRowID();
 
 /// Add topic getOn
-$insertTopic = $db->prepare('INSERT INTO topics (topic_name, topic_type, accessory_id) VALUES (:topic_name, :topic_type, :accessory_id)');
+$insertTopic = $db->prepare('INSERT INTO topics (topic_name, topic_type, payload_formatter, accessory_id) VALUES (:topic_name, :topic_type, :payload_formatter, :accessory_id)');
 $insertTopic->bindValue(':topic_name', $getOn);
 $insertTopic->bindValue(':topic_type', 'getOn');
+if(isset($payloadFormatter)){
+    $insertTopic->bindValue(':payload_formatter', $payloadFormatter);
+}else{
+    $insertTopic->bindValue(':payload_formatter', null, SQLITE3_NULL);
+}
 $insertTopic->bindValue(':accessory_id', $accessoryId);
 $insertTopic->execute();
 // Récupération de l'identifiant de l'accessoire inséré

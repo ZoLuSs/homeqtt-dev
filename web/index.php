@@ -234,10 +234,11 @@ function sendForm() {
     }).then(result=>{console.log(result);});
 }
 <?php } 
-echo "var myArray = " . json_encode($topicArray) . ";";
+echo "var myArray = " . json_encode($accessoryList) . ";";
 ?>
 
 </script>
 <script src="/js/index.js"></script>
 <script src="/js/socket.js"></script>
+<script src="/js/card.js"></script>
 </html>

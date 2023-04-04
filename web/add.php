@@ -11,6 +11,8 @@ require_once(__DIR__ . "/card.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/index.css">
     <title>HomeQTT - <?php if(isset($_GET['type'])){echo ucfirst(add["add".$_GET['type']]);}else{echo ucfirst(general["add"]);}?></title>
+    <style type="text/css" media="screen">
+</style>
 </head>
 <body>
     <?php require_once("header.php");?>
@@ -70,7 +72,7 @@ require_once(__DIR__ . "/card.php");
                                     </select>
                                 </div>
                             <?php if($_POST['object'] == "light"){
-                                $form=true;$form_url="/config/add-light";$goto="/";
+                                $form=true;$form_url="/config/add-light";$goto="/";$needAce=true;
                                 ?>
                                 <div class="input-container">
                                     <label for=""><?php echo ucfirst(add["typeOfLight"]);?></label>
@@ -90,6 +92,10 @@ require_once(__DIR__ . "/card.php");
                                 <div class="input-container">
                                     <label for=""><?php echo ucfirst(add["getontopic"]);?></label>
                                     <input type="text" name="getOn" placeholder="light/room/geton">
+                                </div>
+                                <div class="input-container aceEditor-container">
+                                    <label for="">Payload formatter (si nécéssaire)</label>
+                                    <div id="editor"></div>
                                 </div>
                                 <div class="input-container">
                                     <label for=""><?php echo ucfirst(add["payloadon"]);?></label>
@@ -246,6 +252,12 @@ function sendForm() {
     <?php if(isset($form) && $form){ ?>
         var form = document.getElementById("form");
         var data = new FormData(form);
+        if(document.getElementById("editor")){
+            var editorValue = editor.getValue();
+            if(editorValue.length > 0){
+                data.append("payloadFormatter", editorValue);
+            }
+        }        
     <?php } ?>
     fetch("<?php echo $form_url;?>", {
     <?php if(isset($form) && $form){ ?>
@@ -268,6 +280,24 @@ function sendForm() {
     }).then(result=>{console.log(result);});
 }
 </script>
-<?php } ?>
+<?php } 
+if(isset($needAce)){
+    if($needAce){?>
+
+<script src="/js/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setOptions({
+        placeholder: `//Topic message is 'msg'
+if(msg.switch.output){
+    data = "ON";
+}
+else{
+    data = "OFF";
+}
+return data;`});
+</script>
+<?php }
+}?>
 <script src="/js/index.js"></script>
 </html>

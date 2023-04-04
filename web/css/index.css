@@ -401,6 +401,19 @@ input[type="file"] {
   background-color: rgba(70, 70, 70, 0.3);
 }
 
+form > .aceEditor-container {
+    height: 300px;
+}
+
+form > .aceEditor-container #editor{
+    height: 275px;
+}
+
+form > .aceEditor-container #editor .ace_placeholder {
+    font-size: 16px;
+    display: inline;
+}
+
 /* Loader */
 .modal{
     display: none;
