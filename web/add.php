@@ -20,7 +20,7 @@ require_once(__DIR__ . "/card.php");
         <?php
             if (isset($_GET['type'])) {
                 if($_GET['type'] == "room"){
-                    $form=true;$form_url="/config/add-room";$goto="/";?>
+                    $form=true;$form_url="/config/room/add";$goto="/";?>
                     <h2><?php echo ucfirst(add["addroom"]);?>: </h2>
                     <form id="form">
                         <div class="input-container">
@@ -72,7 +72,7 @@ require_once(__DIR__ . "/card.php");
                                     </select>
                                 </div>
                             <?php if($_POST['object'] == "light"){
-                                $form=true;$form_url="/config/add-light";$goto="/";$needAce=true;
+                                $form=true;$form_url="/config/light/add";$goto="/";$needAce=true;
                                 ?>
                                 <div class="input-container">
                                     <label for=""><?php echo ucfirst(add["typeOfLight"]);?></label>

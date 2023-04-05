@@ -28,7 +28,7 @@ while ($row = $roomQ->fetchArray()) {
 }
 // Vérifie si la requête a retourné des résultats
 if ($countRoom > 0) {
-    $form=true;$form_url="/config/update-room";$goto="/";
+    $form=true;$form_url="/config/room/update-order";$goto="/";
     ?>
     <div class="segment">
       <h1>Rooms managment</h1>

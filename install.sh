@@ -160,7 +160,6 @@ listen.group = www-data
 ;listen.acl_users =
 ;listen.acl_groups =
 
-
 ; Choose how the process manager will control the number of child processes.
 ; Possible Values:
 ;   static  - a fixed number (pm.max_children) of child processes;
