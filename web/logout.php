@@ -9,6 +9,8 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
+session_unset();
 session_destroy();
+http_response_code(401);
 
 header("Location: /login");

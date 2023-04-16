@@ -1,7 +1,5 @@
 <?php
-ini_set('session.gc_maxlifetime', 14400);
-session_cache_expire(14400);
-session_start();
+require_once('config/session.php');
 if($_SESSION["login"]){
     header("Location: /");
     exit();

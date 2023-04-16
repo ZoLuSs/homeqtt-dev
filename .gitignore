@@ -105,3 +105,5 @@ dist
 
 # homeQTT user file
 homeqtt.db
+
+sessions/*

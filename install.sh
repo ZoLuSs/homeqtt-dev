@@ -266,11 +266,13 @@ server {
     location / {
         try_files \$uri \$uri/ \$uri.php;
         index index.php;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php$phpV-fpm-homeqtt.sock;
+        fastcgi_param  HTTPS              \$http_x_forwarded_proto;
     }
 
     location /socket.io/ {
@@ -329,3 +331,8 @@ echo -e "\e[1;34mAllow homeqtt to manage systemctl\e[0m"
 else
 echo -e "\e[1;34mhomeqtt already allowed to manage systemctl\e[0m"
 fi
+
+echo "* * * * * homeqtt /usr/bin/php /opt/homeqtt/lib/cleansession.php" > /etc/cron.d/homeqtt
+chmod 644 /etc/cron.d/homeqtt
+
+echo -e "Cron Jobs   \e[32mOK\e[0m"
