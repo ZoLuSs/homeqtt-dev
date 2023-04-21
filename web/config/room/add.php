@@ -4,7 +4,8 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
     header("Location: ".$_GET["goto"]);
 }
 
-session_start();
+require_once(__DIR__.'/../session.php');
+
 if(!$_SESSION["login"]){
     http_response_code(401);
     exit(json_encode("You need to login for submiting this form"));
@@ -17,7 +18,7 @@ if(isset($_POST['name']) && !empty($_POST['name'])){
     exit(json_encode("The room name is missing"));
 }
 
-require_once('co_bdd.php');
+require_once(__DIR__.'/../co_bdd.php');
 
 $room_existQ = $db->prepare("SELECT COUNT(*) FROM rooms WHERE room_name= :name");
 $room_existQ->bindValue(':name', $name, SQLITE3_TEXT);

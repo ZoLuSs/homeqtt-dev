@@ -11,13 +11,14 @@ function form_card_button($name, $type, $icon){
 }
 
 function card_light($name, $type, $icon, $on, $id){
-    $card = "<div class='card light";
-    if($on == 1){$card.=" active";}
-    $card .= "' id='accessory_" . $id . "'>
-        <div class='card-title'><span>" . $name . "</span></div>
-            <div class='card-container action'>";
-            $card .= file_get_contents(__DIR__ . "/img/svg/".$icon.".svg");
-        $card.= "</div>
-    </div>";
+    $activeClass = $on == 1 ? " active" : "";
+    $iconPath = __DIR__ . "/img/svg/".$icon.".svg";
+    $iconContent = file_get_contents($iconPath);
+    $card = <<<HTML
+        <div class="card light{$activeClass}" id="accessory_{$id}" data-type="{$type}">
+            <div class="card-title"><span>{$name}</span></div>
+            <div class="card-container action">{$iconContent}</div>
+        </div>
+    HTML;
     return $card;
 }

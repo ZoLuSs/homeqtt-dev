@@ -277,7 +277,9 @@ function sendForm() {
             loading.style.display = "none";
         }
         return response.json();
-    }).then(result=>{console.log(result);});
+    }).then(result=>{
+        showNotification(result, "error", 5000);
+    });
 }
 </script>
 <?php } 

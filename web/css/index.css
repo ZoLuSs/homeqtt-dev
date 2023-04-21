@@ -14,7 +14,7 @@ body{
     flex-direction: column;
     height: 100%;
 }
-
+    
 *{
     user-select: none;
     -webkit-user-select: none;

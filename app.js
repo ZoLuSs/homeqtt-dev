@@ -5,7 +5,8 @@ const sqlite3 = require('sqlite3');
 const { Server } = require("socket.io");
 const jwt = require('jsonwebtoken');
 const database = require('./lib/database');
-
+const { access } = require('fs');
+let mqttClient;
 const io = new Server({ /* options */ });
 let JWT_KEY;
 
@@ -60,7 +61,32 @@ io.use(function(socket, next){
       }
       io.emit('accessory', status);
     }
-  })
+  });
+
+  socket.on('setAccessory', async function(message){
+    try{
+      const accessoryType = await database.getAccessoryTypeFromAccessoryId(message.accessoryID);
+      switch(accessoryType){
+        case "light":
+          switch(message.set){
+            case "setOn":
+              const [topic, payloadObject] = await Promise.all([
+                database.getTopicNameFromAccessoryIdAndTopicType(message.accessoryID, "setOn"),
+                database.getParameterByAccessoryIdAndName(message.accessoryID, message.payload === "on" ? "payloadOn" : "payloadOff")
+              ]);
+              const payload = payloadObject.parameters_value;
+              mqttClient.publish(topic, payload);
+              break;
+            default:
+              console.log("This set dosn't exist !");
+          }
+          break;
+      }
+    } catch (error) {
+      console.error(error);
+      // Send notif error to websocket !
+    }    
+  });
 });
 
 io.listen(4002);
@@ -110,12 +136,11 @@ async function getAllTopic() {
   try {
     const config = await getMqttConfig();
     const allTopic = await getAllTopic();
-    const client = mqtt.connect(config.url, config.options);
-    //console.log(allTopic);
+    mqttClient = mqtt.connect(config.url, config.options);
 
-    client.on('connect', () => {
+    mqttClient.on('connect', () => {
       console.log('Client MQTT connecté');
-      client.subscribe(allTopic, function (err) {
+      mqttClient.subscribe(allTopic, function (err) {
         if (!err) {
           console.log(`Souscription aux topics suivant réussie:`);
           allTopic.forEach(topic => console.log(topic));
@@ -123,20 +148,19 @@ async function getAllTopic() {
       });
     });
 
-    client.on('reconnect', () => {
+    mqttClient.on('reconnect', () => {
       console.log('Reconnexion au broker MQTT');
     });
 
-    client.on('error', (error) => {
+    mqttClient.on('error', (error) => {
       console.log('Erreur de connexion au broker MQTT:', error);
     });
 
-    client.on('offline', () => {
+    mqttClient.on('offline', () => {
       console.log('Le client MQTT est déconnecté');
     });
 
-    // Gérer les événements de messages du client MQTT
-    client.on('message', async function (topic, message) {
+    mqttClient.on('message', async function (topic, message) {
       try{
         const accessoryId = await database.getAccessoryIdFromTopic(topic);
         const payloadFormater = await database.getPayloadFormater(topic);
