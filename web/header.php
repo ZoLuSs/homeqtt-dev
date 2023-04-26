@@ -23,6 +23,7 @@ $housename = $db->querySingle('SELECT value FROM config WHERE name="house_name"'
                 </svg>
             </a>
             <div class="dropdown-container">
+                <a class="button" href="/add?type=user"><?php echo ucfirst(add['adduser']);?></a>
                 <a class="button" href="/add?type=room"><?php echo ucfirst(add['addroom']);?></a>
                 <a class="button" href="/add?type=accessory"><?php echo ucfirst(add['addaccessory']);?></a>
             </div> 
@@ -35,9 +36,10 @@ $housename = $db->querySingle('SELECT value FROM config WHERE name="house_name"'
                 </svg>
             </a>
             <div class="dropdown-container">
-                <a class="button" href="/setup/room">Room settings</a>
+                <a class="button" href="/setup/room"><?php echo ucfirst(general['roomsmgmt']);?></a>
+                <a class="button" href="/setup/users"><?php echo ucfirst(general['users']);?></a>
                 <hr>
-                <a class="button" href="logout"><?php echo ucfirst(general['logout']);?></a>
+                <a class="button" href="/logout"><?php echo ucfirst(general['logout']);?></a>
             </div> 
         </div>
     </div>

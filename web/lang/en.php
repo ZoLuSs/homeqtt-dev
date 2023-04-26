@@ -19,7 +19,11 @@ define('general', [
     'name' => 'name',
     'accessory' => "accessory",
     'room' => "room",
+    "rooms" => "rooms",
+    "roomsmgmt" => "Rooms managment",
     'housename' => "house name",
+    "users" => "Users",
+    "usersmgmt" => "Users managment"
 ]);
 
 define('firstlaunch', [
@@ -66,5 +70,6 @@ define('add', [
     "setontopic" => "topic for setting on/off",
     "getontopic" => "topic of status on/off",
     "payloadon" => "on value",
-    "payloadoff" => "off value"
+    "payloadoff" => "off value",
+    "adduser" => "add a user"
 ]);

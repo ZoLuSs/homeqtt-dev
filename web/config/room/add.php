@@ -6,11 +6,6 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
 
 require_once(__DIR__.'/../session.php');
 
-if(!$_SESSION["login"]){
-    http_response_code(401);
-    exit(json_encode("You need to login for submiting this form"));
-}
-
 if(isset($_POST['name']) && !empty($_POST['name'])){
     $name = $_POST['name'];
 }else{

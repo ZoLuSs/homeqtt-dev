@@ -19,6 +19,23 @@ require_once(__DIR__ . "/card.php");
     <div class="container">
         <?php
             if (isset($_GET['type'])) {
+                if($_GET['type'] == "user"){
+                        $form=true;$form_url="/config/user/add";$goto="/";?>
+                        <h2><?php echo ucfirst(add["adduser"]);?>: </h2>
+                        <form id="form">
+                            <div class="input-container">
+                                <label for=""><?php echo ucfirst(general['username']);?></label>
+                                <input type="text" name="username">
+                            </div>
+                            <div class="input-container">
+                                <label for=""><?php echo ucfirst(general['password']);?></label>
+                                <input type="password" name="password">
+                            </div>
+                        </form>
+                        <a class="button wide" id="submit"><?php echo ucfirst(general["add"]);?></a>
+                        <a class="button wide" href=""><?php echo ucfirst(general['back']);?></a>
+                    <?php
+                }
                 if($_GET['type'] == "room"){
                     $form=true;$form_url="/config/room/add";$goto="/";?>
                     <h2><?php echo ucfirst(add["addroom"]);?>: </h2>
@@ -130,6 +147,7 @@ require_once(__DIR__ . "/card.php");
             }
             else{ ?>
                 <h2><?php echo ucfirst(add["whatadd"]);?></h2>
+                    <a class="button wide" href="?type=user"><?php echo ucfirst(add["adduser"]);?></a>
                     <a class="button wide" href="?type=room"><?php echo ucfirst(add["addroom"]);?></a>
                     <a class="button wide" href="?type=accessory"><?php echo ucfirst(add["addaccessory"]);?></a>
             <?php } /*

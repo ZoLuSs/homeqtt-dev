@@ -4,11 +4,7 @@ if(isset($_GET["goto"]) && !empty($_GET["goto"])){
     header("Location: ".$_GET["goto"]);
 }
 
-session_start();
-if(!$_SESSION["login"]){
-    http_response_code(401);
-    exit(json_encode("You need to login for submiting this form"));
-}
+require_once(__DIR__.'/../session.php');
 
 $jsonData = file_get_contents('php://input');
 $array = json_decode($jsonData, true);
@@ -18,7 +14,7 @@ if(empty($array)){
     exit(json_encode("No data have been sent"));
 }
 
-require_once('co_bdd.php');
+require_once(__DIR__.'/../co_bdd.php');
 
 foreach($array as $data) {
     $room_existQ = $db->prepare("UPDATE rooms SET `order` = :order WHERE room_name = :name");

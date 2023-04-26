@@ -8,7 +8,7 @@ require_once(__DIR__ . "/../lang/lang.php");
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/index.css">
-    <title>HomeQTT - <?php echo ucfirst(general['roomsmgmt']);?></title>
+    <title>HomeQTT - <?php echo ucfirst(general['users']);?></title>
     <script src="/js/socketio/socket.io.min.js"></script>
     <style>
         li {
@@ -21,48 +21,40 @@ require_once(__DIR__ . "/../lang/lang.php");
 <div class="container">
 <?php
 
-$roomQ = $db->query('SELECT room_id, room_name FROM rooms ORDER BY "order" ASC');
-$countRoom = 0;
-while ($row = $roomQ->fetchArray()) {
-    $countRoom++;
+$userQ = $db->query('SELECT id, username FROM user ORDER BY ID ASC');
+while ($row = $userQ->fetchArray()) {
+  $countUser++;
 }
-// Vérifie si la requête a retourné des résultats
-if ($countRoom > 0) {
-    $form=true;$form_url="/config/room/update-order";$goto="/setup/room";
+    $form=true;$form_url="/config/room/update-order";$goto="/";
     ?>
     <div class="segment">
-      <h1><?php echo ucfirst(general['roomsmgmt']);?></h1>
-      <h2>Drag and drop rooms to change order and save.</h2>
+      <h1><?php echo ucfirst(general['usersmgmt']);?></h1>
       <div class="table-container">
         <table class="table">
           <tbody id="maTable">
   
     <?php
-    // Boucle sur chaque ligne du résultat et affiche les valeurs de chaque colonne
-    while ($data = $roomQ->fetchArray()) {
+    while ($data = $userQ->fetchArray()) {
         ?>
             <tr draggable="true">
-              <td class="col-1"><?php echo $data['room_name'];?></td>
+              <td class="col-1"><?php echo $data['username'];?></td>
               <td class="col-2">
                 <a class="button">Renommer</a>
-                <a class="button" id="delete" onclick='sendJSON("/config/room/delete", {"roomid": <?php echo $data["room_id"];?>}, "/setup/room")'>Supprimer</a>
+                <?php if($countUser > 1){ ?>
+                <a class="button" id="delete" onclick='sendJSON("/config/user/delete", {"userid": <?php echo $data["id"];?>}, "/setup/users")'>Supprimer</a>
+                <?php } ?>
               </td>
             </tr>
-<?php
+    <?php
     }?>
           </tbody>
       </table>
     </div>
   </div>
 <a class="button wide" id="submit"><?php echo ucfirst(general["save"]);?></a>
-<?php } 
-else{ ?>
-<div class="segment">
-    <h1><?php echo ucfirst(general['noroomcreated']);?></h1>
+
 </div>
-<?php } ?>
-</div>
-    <div class="modal" id="modal-loader">
+    <div class="modal" id="modal">
         <div class="modal-container">
             <span class="loader"></span>
         </div>
@@ -135,12 +127,17 @@ for (var i = 0; i < items.length; i++) {
 
 <?php if(isset($form_url) && !empty($form_url)){ ?>
 document.getElementById("submit").addEventListener("click", sendForm);
-loading = document.getElementById("modal-loader");
+
 function sendForm() {
     loading.style.display = "flex";
     <?php if(isset($form) && $form){ ?>
         var form = document.getElementById("form");
-        let data = JSON.stringify(Array.from(order.entries()));
+        <?php if(isset($_GET['adduser'])){ ?>
+            var data = new FormData(form);
+            <?php }
+            else { ?>
+            let data = JSON.stringify(Array.from(order.entries()));
+            <?php } ?>
     <?php } ?>
     fetch("<?php echo $form_url;?>", {
     <?php if(isset($form) && $form){ ?>
@@ -163,7 +160,9 @@ function sendForm() {
             loading.style.display = "none";
         }
         return response.json();
-    }).then(result=>{console.log(result);});
+    }).then(result=>{
+        showNotification(result, "error", 5000);
+    });
 }
 <?php } ?>
 

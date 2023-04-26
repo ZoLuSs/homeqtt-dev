@@ -99,3 +99,27 @@ function hideNotification(notification) {
     }
   }, 300);
 }
+
+loading = document.getElementById("modal");
+
+function sendJSON(url, data, endurl){
+    fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.status >= 200 && response.status <= 299) {
+            window.location.href = endurl;
+            loading.style.display = "none";
+        } else {
+            loading.style.display = "none";
+        }
+        return response.json();
+    })
+    .then(result=>{
+        showNotification(result, "error", 5000);
+    });
+}

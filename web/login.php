@@ -15,12 +15,13 @@ if(isset($_POST["username"])){
                 exit(json_encode("Password is empty"));
             }else{
                 $db = new SQLite3('../homeqtt.db');
-                $userQ = $db->prepare('SELECT password FROM user WHERE username=:username');
+                $userQ = $db->prepare('SELECT id, password FROM user WHERE username=:username');
                 $userQ->bindValue(':username', $_POST["username"], SQLITE3_TEXT);
                 $result = $userQ->execute();
                 if($data = $result->fetchArray()){
                     if(password_verify($_POST["password"],$data["password"])){
                         $_SESSION["login"] = true;
+                        $_SESSION["userid"] = $data["id"];
                     }else{
                         http_response_code(400);
                         exit(json_encode("Password incorrect"));
