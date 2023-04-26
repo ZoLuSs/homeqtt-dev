@@ -1,3 +1,7 @@
+# In Dev
+This project is under development and not finished.
+You can try the dev version but at your own risk !
+
 # Installation
 >This instruction is based on root user
 
